@@ -1,1 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 /* You can add global styles to this file, and also import other style files */
+
+:root {
+  --font-family: 'DiscordFont';
+  --brand-color: 114 137 218;
+}
+
+@font-face {
+  font-family: 'DiscordFont';
+  src: url(./assets/fonts/ggsans-Normal.ttf);
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'DiscordFont';
+  src: url(./assets/fonts/ggsans-Medium.ttf);
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: 'DiscordFont';
+  src: url(./assets/fonts/ggsans-Semibold.ttf);
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: 'DiscordFont';
+  src: url(./assets/fonts/ggsans-Bold.ttf);
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: 'DiscordFont';
+  src: url(./assets/fonts/ggsans-ExtraBold.ttf);
+  font-weight: 800;
+}
+
+@font-face {
+  font-family: 'DiscordFont';
+  src: url(./assets/fonts/ggsans-NormalItalic.ttf);
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'DiscordFont';
+  src: url(./assets/fonts/ggsans-MediumItalic.ttf);
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'DiscordFont';
+  src: url(./assets/fonts/ggsans-SemiboldItalic.ttf);
+  font-weight: 600;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'DiscordFont';
+  src: url(./assets/fonts/ggsans-BoldItalic.ttf);
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'DiscordFont';
+  src: url(./assets/fonts/ggsans-ExtraBoldItalic.ttf);
+  font-weight: 800;
+  font-style: italic;
+}
