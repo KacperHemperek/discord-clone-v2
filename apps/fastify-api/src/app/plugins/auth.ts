@@ -1,13 +1,11 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
 import auth from '@fastify/auth';
-import { User } from '@prisma/client';
+import { AuthUser } from '@shared-types/user';
 
-export type SignTokenHandler = (
-  user: Omit<User, 'password'>
-) => Promise<string>;
+export type SignTokenHandler = (user: AuthUser) => Promise<string>;
 
-export type DecodedUserToken = Omit<User, 'password'> & {
+export type DecodedUserToken = AuthUser & {
   iat: number;
   exp: number;
 };

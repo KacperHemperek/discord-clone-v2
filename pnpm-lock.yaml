@@ -62,6 +62,9 @@ dependencies:
   react-dom:
     specifier: 18.2.0
     version: 18.2.0(react@18.2.0)
+  react-router-dom:
+    specifier: ^6.20.0
+    version: 6.20.0(react-dom@18.2.0)(react@18.2.0)
   tslib:
     specifier: ^2.3.0
     version: 2.6.2
@@ -3163,6 +3166,11 @@ packages:
   /@prisma/engines@5.6.0:
     resolution: {integrity: sha512-Mt2q+GNJpU2vFn6kif24oRSBQv1KOkYaterQsi0k2/lA+dLvhRX6Lm26gon6PYHwUM8/h8KRgXIUMU0PCLB6bw==}
     requiresBuild: true
+    dev: false
+
+  /@remix-run/router@1.13.0:
+    resolution: {integrity: sha512-5dMOnVnefRsl4uRnAdoWjtVTdh8e6aZqgM4puy9nmEADH72ck+uXwzpJLEKE9Q6F8ZljNewLgmTfkxUrBdv4WA==}
+    engines: {node: '>=14.0.0'}
     dev: false
 
   /@sinclair/typebox@0.27.8:
@@ -8730,6 +8738,29 @@ packages:
     resolution: {integrity: sha512-wViHqhAd8OHeLS/IRMJjTSDHF3U9eWi62F/MledQGPdJGDhodXJ9PBLNGr6WWL7qlH12Mt3TyTpbS+hGXMjCzQ==}
     engines: {node: '>=0.10.0'}
     dev: true
+
+  /react-router-dom@6.20.0(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-CbcKjEyiSVpA6UtCHOIYLUYn/UJfwzp55va4yEfpk7JBN3GPqWfHrdLkAvNCcpXr8QoihcDMuk0dzWZxtlB/mQ==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      react: '>=16.8'
+      react-dom: '>=16.8'
+    dependencies:
+      '@remix-run/router': 1.13.0
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      react-router: 6.20.0(react@18.2.0)
+    dev: false
+
+  /react-router@6.20.0(react@18.2.0):
+    resolution: {integrity: sha512-pVvzsSsgUxxtuNfTHC4IxjATs10UaAtvLGVSA1tbUE4GDaOSU1Esu2xF5nWLz7KPiMuW8BJWuPFdlGYJ7/rW0w==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      react: '>=16.8'
+    dependencies:
+      '@remix-run/router': 1.13.0
+      react: 18.2.0
+    dev: false
 
   /react@18.2.0:
     resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}

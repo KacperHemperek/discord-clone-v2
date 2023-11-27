@@ -1,8 +1,8 @@
 import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-
-import App from './app/app';
+import { RouterProvider } from 'react-router-dom';
+import { router } from './app/router';
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,7 +18,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <App />
+      <RouterProvider router={router} />
     </QueryClientProvider>
   </StrictMode>
 );
