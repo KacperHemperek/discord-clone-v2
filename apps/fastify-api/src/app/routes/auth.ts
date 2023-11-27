@@ -1,5 +1,6 @@
 import { RequestUser } from 'apps/fastify-api/src';
 import { FastifyPluginCallback } from 'fastify';
+import { logger } from '../utils/logger';
 
 type DbUser = {
   id: number;
@@ -69,7 +70,6 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
       fastify.addRefreshTokenToCookies(reply, refreshToken);
 
       return {
-        message: 'User logged in successfully',
         user: {
           id: user.id,
           username: user.username,
@@ -79,14 +79,19 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
   });
 
   fastify.post('/logout', {
-    handler: async (_request, reply) => {
-      fastify.removeAccessTokenFromCookies(reply);
-      fastify.removeRefreshTokenFromCookies(reply);
-      return { message: 'User logged out successfully' };
+    handler: async (request, reply) => {
+      logger.info(
+        `Request cookies pre removal: ${JSON.stringify(request.cookies)}`
+      );
+      reply.removeAccessTokenFromCookies();
+      reply.removeRefreshTokenFromCookies();
+
+      return await reply.send({ message: 'Logged out' });
     },
   });
 
   fastify.get('/me', {
+    preHandler: fastify.serializeUser,
     handler: async (request) => {
       return { user: request.user };
     },

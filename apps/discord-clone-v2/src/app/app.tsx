@@ -47,6 +47,27 @@ export function App() {
     },
   });
 
+  const { mutate: logoutMutation } = useMutation({
+    mutationFn: async () => {
+      try {
+        const response = await fetch('http://localhost:4444/api/auth/logout', {
+          method: 'POST',
+          credentials: 'include',
+        });
+
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    onSuccess: (data) => {
+      console.log(data);
+
+      queryClient.setQueryData(['test'], null);
+    },
+  });
+
   const login = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     loginMutation({ username, password });
@@ -59,7 +80,15 @@ export function App() {
     <div className='text-slate-50 bg-brand min-h-screen flex'>
       {isLoading && 'Loading...'}
       {!isLoading && user ? (
-        JSON.stringify(user)
+        <div>
+          <h1>Hello {user.username}</h1>
+          <button
+            className='bg-rose-500 p-2 rounded-md'
+            onClick={() => logoutMutation()}
+          >
+            Logout
+          </button>
+        </div>
       ) : (
         <form
           onSubmit={login}

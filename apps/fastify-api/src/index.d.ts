@@ -1,9 +1,9 @@
-import { CookieSerializeOptions } from '@fastify/cookie';
 import {
   AddRefreshTokenToCookiesHandler,
   AddAccessTokenToCookiesHandler,
   GetTokensFromCookiesHandler,
   RemoveTokenFromCookiesHandler,
+  CookiesConfig,
 } from './app/plugins/cookies';
 
 import { SignTokenHandler, VerifyTokenHandler } from './app/plugins/auth';
@@ -25,11 +25,14 @@ declare module 'fastify' {
     addRefreshTokenToCookies: AddRefreshTokenToCookiesHandler;
     addAccessTokenToCookies: AddAccessTokenToCookiesHandler;
     getTokensFromCookies: GetTokensFromCookiesHandler;
-    removeAccessTokenFromCookies: RemoveTokenFromCookiesHandler;
-    removeRefreshTokenFromCookies: RemoveTokenFromCookiesHandler;
-    authCookieOptions: CookieSerializeOptions;
+    cookieConfig: CookiesConfig;
     signAccessToken: SignTokenHandler;
     signRefreshToken: SignTokenHandler;
     verifyAccessToken: VerifyTokenHandler;
+  }
+
+  interface FastifyReply {
+    removeAccessTokenFromCookies: RemoveTokenFromCookiesHandler;
+    removeRefreshTokenFromCookies: RemoveTokenFromCookiesHandler;
   }
 }
