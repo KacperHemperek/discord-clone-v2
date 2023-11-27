@@ -29,18 +29,18 @@ export default fastifyPlugin(async function (fastify) {
     });
   };
 
-  const verifyAccessToken = async (token: string) => {
+  const verifyToken = async (token: string) => {
     return fastify.jwt.verify<DecodedToken>(token);
   };
 
-  const serializeUser: SerializeUserHandler = async (
+  const deserializeUser: SerializeUserHandler = async (
     request: FastifyRequest,
     reply: FastifyReply
   ) => {
     const { accessToken, refreshToken } = fastify.getTokensFromCookies(request);
     if (accessToken) {
       try {
-        const decodedAccessToken = await fastify.verifyAccessToken(accessToken);
+        const decodedAccessToken = await fastify.verifyToken(accessToken);
 
         if (decodedAccessToken) {
           const user: RequestUser = {
@@ -62,7 +62,7 @@ export default fastifyPlugin(async function (fastify) {
 
     if (refreshToken) {
       try {
-        const decoded = await fastify.verifyAccessToken(refreshToken);
+        const decoded = await fastify.verifyToken(refreshToken);
         if (decoded) {
           fastify.log.info(`[ plugin/auth ] User verified with refresh token.`);
           const user = {
@@ -89,6 +89,6 @@ export default fastifyPlugin(async function (fastify) {
 
   fastify.decorate('signAccessToken', signAccessToken);
   fastify.decorate('signRefreshToken', signRefreshToken);
-  fastify.decorate('verifyAccessToken', verifyAccessToken);
-  fastify.decorate('serializeUser', serializeUser);
+  fastify.decorate('verifyToken', verifyToken);
+  fastify.decorate('deserializeUser', deserializeUser);
 });

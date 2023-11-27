@@ -21,14 +21,14 @@ export type DecodedToken = RequestUser & {
 declare module 'fastify' {
   interface FastifyInstance {
     user: RequestUser | null;
-    serializeUser: (request: FastifyRequest) => void;
+    deserializeUser: (request: FastifyRequest) => void;
     addRefreshTokenToCookies: AddRefreshTokenToCookiesHandler;
     addAccessTokenToCookies: AddAccessTokenToCookiesHandler;
     getTokensFromCookies: GetTokensFromCookiesHandler;
     cookieConfig: CookiesConfig;
     signAccessToken: SignTokenHandler;
     signRefreshToken: SignTokenHandler;
-    verifyAccessToken: VerifyTokenHandler;
+    verifyToken: VerifyTokenHandler;
   }
 
   interface FastifyReply {

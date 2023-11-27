@@ -1,6 +1,5 @@
 import { RequestUser } from 'apps/fastify-api/src';
 import { FastifyPluginCallback } from 'fastify';
-import { logger } from '../utils/logger';
 
 type DbUser = {
   id: number;
@@ -79,7 +78,7 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
   });
 
   fastify.post('/logout', {
-    handler: async (request, reply) => {
+    handler: async (_request, reply) => {
       reply.removeAccessTokenFromCookies();
       reply.removeRefreshTokenFromCookies();
 
@@ -88,7 +87,7 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
   });
 
   fastify.get('/me', {
-    preHandler: fastify.serializeUser,
+    preHandler: fastify.deserializeUser,
     handler: async (request) => {
       return { user: request.user };
     },
