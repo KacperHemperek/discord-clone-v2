@@ -3,6 +3,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
 import { useRegister } from '../../hooks/useRegister';
+import { useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 
 const registerFormSchema = z
   .object({
@@ -23,12 +25,18 @@ const registerFormSchema = z
 type RegisterFormSchema = z.infer<typeof registerFormSchema>;
 
 export default function RegisterPage() {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const form = useForm<RegisterFormSchema>({
     resolver: zodResolver(registerFormSchema),
   });
   const { mutate: register } = useRegister({
     onError: (error) => {
       console.error(error.message);
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData(['user'], data);
+      navigate('/');
     },
   });
 

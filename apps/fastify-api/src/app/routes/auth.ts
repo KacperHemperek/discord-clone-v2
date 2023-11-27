@@ -41,7 +41,7 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
       },
     },
     handler: async (request, reply) => {
-      const { username, password } = request.body;
+      const { username, password, confirmPassword } = request.body;
 
       const user = await fastify.db.user.findFirst({ where: { username } });
 
@@ -54,6 +54,23 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
           .status(StatusCodes.UNAUTHORIZED)
           .send({ message: 'User with that username already exists' });
         return await reply;
+      }
+
+      const passwordRegex = new RegExp(
+        /^(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{10,32}$/
+      );
+
+      if (!passwordRegex.test(password)) {
+        return await reply.status(StatusCodes.UNAUTHORIZED).send({
+          message:
+            'Password must be at least 8 characters long, contain at least 1 uppercase letter, 1 lowercase letter, and 1 number',
+        });
+      }
+
+      if (password !== confirmPassword) {
+        return await reply.status(StatusCodes.UNAUTHORIZED).send({
+          message: 'Passwords do not match',
+        });
       }
 
       const id = crypto.randomUUID();
