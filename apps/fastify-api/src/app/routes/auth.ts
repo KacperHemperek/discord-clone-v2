@@ -55,19 +55,18 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
         return await reply;
       }
 
-      const accessToken = fastify.jwt.sign(
-        { id: user.id, username: user.username },
-        {
-          expiresIn: '20s',
-        }
-      );
+      const userObj = {
+        id: user.id,
+        username: user.username,
+      };
 
-      const refreshToken = fastify.jwt.sign(
-        { id: user.id },
-        {
-          expiresIn: '7d',
-        }
-      );
+      const accessToken = fastify.jwt.sign(userObj, {
+        expiresIn: '20s',
+      });
+
+      const refreshToken = fastify.jwt.sign(userObj, {
+        expiresIn: '7d',
+      });
 
       fastify.addAccessTokenToCookies(reply, accessToken);
       fastify.addRefreshTokenToCookies(reply, refreshToken);
@@ -79,6 +78,14 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
           username: user.username,
         },
       };
+    },
+  });
+
+  fastify.post('/logout', {
+    handler: async (_request, reply) => {
+      fastify.removeAccessTokenFromCookies(reply);
+      fastify.removeRefreshTokenFromCookies(reply);
+      return { message: 'User logged out successfully' };
     },
   });
 

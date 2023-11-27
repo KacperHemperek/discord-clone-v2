@@ -1,5 +1,5 @@
 import fastifyPlugin from 'fastify-plugin';
-import cookie from '@fastify/cookie';
+import cookie, { CookieSerializeOptions } from '@fastify/cookie';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
 export type AddAccessTokenToCookiesHandler = (
@@ -17,7 +17,14 @@ export type GetTokensFromCookiesHandler = (request: FastifyRequest) => {
   refreshToken: string;
 };
 
+export type RemoveTokenFromCookiesHandler = (reply: FastifyReply) => void;
+
 export default fastifyPlugin(async function (fastify) {
+  const authCookieOptions: CookieSerializeOptions = {
+    httpOnly: true,
+    sameSite: false,
+  };
+
   fastify.register(cookie, {
     secret: 'supersecret',
     hook: 'onRequest',
@@ -28,8 +35,8 @@ export default fastifyPlugin(async function (fastify) {
     accessToken
   ) => {
     reply.setCookie('accessToken', accessToken, {
-      httpOnly: true,
-      sameSite: false,
+      ...fastify.authCookieOptions,
+      maxAge: 20 * 1000,
     });
   };
 
@@ -38,23 +45,43 @@ export default fastifyPlugin(async function (fastify) {
     refreshToken
   ) => {
     reply.setCookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      sameSite: false,
+      ...fastify.authCookieOptions,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
   };
 
   const getTokensFromCookies: GetTokensFromCookiesHandler = (request) => {
-    console.log('\n\nrequest.cookies ===> ', request.cookies);
-
     return {
       accessToken: request.cookies.accessToken,
       refreshToken: request.cookies.refreshToken,
     };
   };
 
+  const removeAccessTokenFromCookies: RemoveTokenFromCookiesHandler = (
+    reply
+  ) => {
+    reply.clearCookie('accessToken', fastify.authCookieOptions);
+  };
+
+  const removeRefreshTokenFromCookies: RemoveTokenFromCookiesHandler = (
+    reply
+  ) => {
+    reply.clearCookie('refreshToken', fastify.authCookieOptions);
+  };
+
+  fastify.decorate('authCookieOptions', authCookieOptions);
+
   fastify.decorate('addAccessTokenToCookies', addAccessTokenToCookies);
   fastify.decorate('addRefreshTokenToCookies', addRefreshTokenToCookies);
   fastify.decorate('getTokensFromCookies', getTokensFromCookies);
+  fastify.decorate(
+    'removeAccessTokenFromCookies',
+    removeAccessTokenFromCookies
+  );
+  fastify.decorate(
+    'removeRefreshTokenFromCookies',
+    removeRefreshTokenFromCookies
+  );
 
   fastify.log.info(`[ plugin ] Cookies plugin loaded.`);
 });

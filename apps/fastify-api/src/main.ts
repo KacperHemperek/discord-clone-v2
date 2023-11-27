@@ -1,10 +1,5 @@
 import Fastify from 'fastify';
 import { app } from './app/app';
-import {
-  AddAccessTokenToCookiesHandler,
-  AddRefreshTokenToCookiesHandler,
-  GetTokensFromCookiesHandler,
-} from './app/plugins/cookies';
 import { logger } from './app/utils/logger';
 
 const host = process.env.HOST ?? 'localhost';
@@ -36,18 +31,3 @@ server.listen({ port, host }, (err) => {
     });
   });
 });
-
-type RequestUser = {
-  id: string;
-  username: string;
-};
-
-declare module 'fastify' {
-  interface FastifyInstance {
-    user: RequestUser | null;
-    serializeUser: (request: FastifyRequest) => void;
-    addRefreshTokenToCookies: AddRefreshTokenToCookiesHandler;
-    addAccessTokenToCookies: AddAccessTokenToCookiesHandler;
-    getTokensFromCookies: GetTokensFromCookiesHandler;
-  }
-}
