@@ -1,18 +1,12 @@
 import fastifyPlugin from 'fastify-plugin';
 import cookie, { CookieSerializeOptions } from '@fastify/cookie';
-import { FastifyReply, FastifyRequest } from 'fastify';
+import {} from 'fastify';
 
-export type AddAccessTokenToCookiesHandler = (
-  reply: FastifyReply,
-  accessToken: string
-) => void;
+export type AddAccessTokenToCookiesHandler = (accessToken: string) => void;
 
-export type AddRefreshTokenToCookiesHandler = (
-  reply: FastifyReply,
-  refreshToken: string
-) => void;
+export type AddRefreshTokenToCookiesHandler = (refreshToken: string) => void;
 
-export type GetTokensFromCookiesHandler = (request: FastifyRequest) => {
+export type GetTokensFromCookiesHandler = () => {
   accessToken: string;
   refreshToken: string;
 };
@@ -53,36 +47,34 @@ export default fastifyPlugin(async function (fastify) {
     hook: 'onRequest',
   });
 
-  const addAccessTokenToCookies: AddAccessTokenToCookiesHandler = (
-    reply,
+  function addAccessTokenToCookies(
     accessToken
-  ) => {
-    reply.setCookie(
+  ): ReturnType<AddAccessTokenToCookiesHandler> {
+    this.setCookie(
       fastify.cookieConfig.accessTokenName,
       accessToken,
       fastify.cookieConfig.accessTokenCookieConfig
     );
-  };
+  }
 
-  const addRefreshTokenToCookies: AddRefreshTokenToCookiesHandler = (
-    reply,
+  function addRefreshTokenToCookies(
     refreshToken
-  ) => {
-    reply.setCookie(
+  ): ReturnType<AddRefreshTokenToCookiesHandler> {
+    this.setCookie(
       fastify.cookieConfig.refreshTokenName,
       refreshToken,
       fastify.cookieConfig.refreshTokenCookieConfig
     );
-  };
+  }
 
-  const getTokensFromCookies: GetTokensFromCookiesHandler = (request) => {
+  function getTokensFromCookies(): ReturnType<GetTokensFromCookiesHandler> {
     return {
-      accessToken: request.cookies[fastify.cookieConfig.accessTokenName],
-      refreshToken: request.cookies[fastify.cookieConfig.refreshTokenName],
+      accessToken: this.cookies[fastify.cookieConfig.accessTokenName],
+      refreshToken: this.cookies[fastify.cookieConfig.refreshTokenName],
     };
-  };
+  }
 
-  function removeAccessTokenFromCookies() {
+  function removeAccessTokenFromCookies(): ReturnType<RemoveTokenFromCookiesHandler> {
     // for some reason clearCookie didn't work for that cookie
     this.setCookie(fastify.cookieConfig.accessTokenName, '', {
       ...fastify.cookieConfig.accessTokenCookieConfig,
@@ -90,7 +82,7 @@ export default fastifyPlugin(async function (fastify) {
     });
   }
 
-  function removeRefreshTokenFromCookies() {
+  function removeRefreshTokenFromCookies(): ReturnType<RemoveTokenFromCookiesHandler> {
     // for some reason clearCookie didn't work for that cookie
     this.setCookie(fastify.cookieConfig.refreshTokenName, '', {
       ...fastify.cookieConfig.refreshTokenCookieConfig,
@@ -99,10 +91,9 @@ export default fastifyPlugin(async function (fastify) {
   }
 
   fastify.decorate('cookieConfig', cookieConfig);
-
-  fastify.decorate('addAccessTokenToCookies', addAccessTokenToCookies);
-  fastify.decorate('addRefreshTokenToCookies', addRefreshTokenToCookies);
-  fastify.decorate('getTokensFromCookies', getTokensFromCookies);
+  fastify.decorateRequest('getTokensFromCookies', getTokensFromCookies);
+  fastify.decorateReply('addAccessTokenToCookies', addAccessTokenToCookies);
+  fastify.decorateReply('addRefreshTokenToCookies', addRefreshTokenToCookies);
   fastify.decorateReply(
     'removeAccessTokenFromCookies',
     removeAccessTokenFromCookies

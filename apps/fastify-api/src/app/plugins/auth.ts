@@ -1,11 +1,18 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
 import auth from '@fastify/auth';
-import { DecodedToken, RequestUser } from '../../index';
+import { User } from '@prisma/client';
 
-export type SignTokenHandler = (user: RequestUser) => Promise<string>;
+export type SignTokenHandler = (
+  user: Omit<User, 'password'>
+) => Promise<string>;
 
-export type VerifyTokenHandler = (token: string) => Promise<DecodedToken>;
+export type DecodedUserToken = Omit<User, 'password'> & {
+  iat: number;
+  exp: number;
+};
+
+export type VerifyTokenHandler = (token: string) => Promise<DecodedUserToken>;
 
 export type SerializeUserHandler = (
   request: FastifyRequest,
@@ -30,24 +37,20 @@ export default fastifyPlugin(async function (fastify) {
   };
 
   const verifyToken = async (token: string) => {
-    return fastify.jwt.verify<DecodedToken>(token);
+    return fastify.jwt.verify<DecodedUserToken>(token);
   };
 
   const deserializeUser: SerializeUserHandler = async (
     request: FastifyRequest,
     reply: FastifyReply
   ) => {
-    const { accessToken, refreshToken } = fastify.getTokensFromCookies(request);
+    const { accessToken, refreshToken } = request.getTokensFromCookies();
     if (accessToken) {
       try {
         const decodedAccessToken = await fastify.verifyToken(accessToken);
 
         if (decodedAccessToken) {
-          const user: RequestUser = {
-            id: decodedAccessToken.id,
-            username: decodedAccessToken.username,
-          };
-          request.user = user;
+          request.user = decodedAccessToken;
           fastify.log.info(`[ plugin/auth ] User verified with access token.`);
           return;
         }
@@ -56,23 +59,15 @@ export default fastifyPlugin(async function (fastify) {
           `[ plugin/auth ] Couldn't verify access token \n${error}`
         );
       }
-    } else {
-      fastify.log.error(`[ plugin/auth ] Access token not found.`);
     }
 
     if (refreshToken) {
       try {
         const decoded = await fastify.verifyToken(refreshToken);
         if (decoded) {
-          fastify.log.info(`[ plugin/auth ] User verified with refresh token.`);
-          const user = {
-            id: decoded.id,
-            username: decoded.username,
-          };
-          request.user = user;
-          const newAccessToken = await fastify.signAccessToken(user);
-          fastify.addAccessTokenToCookies(reply, newAccessToken);
-          fastify.log.info(`[ plugin/auth ] New access token created.`);
+          request.user = decoded;
+          const newAccessToken = await fastify.signAccessToken(decoded);
+          reply.addAccessTokenToCookies(newAccessToken);
         }
       } catch (error) {
         fastify.log.error(
@@ -80,8 +75,6 @@ export default fastifyPlugin(async function (fastify) {
         );
       }
       return;
-    } else {
-      fastify.log.error(`[ plugin/auth ] Refresh token not found.`);
     }
 
     fastify.log.error(`[ plugin/auth ] User not verified.`);

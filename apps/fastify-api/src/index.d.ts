@@ -1,3 +1,5 @@
+import { PrismaClient } from '@prisma/client';
+
 import {
   AddRefreshTokenToCookiesHandler,
   AddAccessTokenToCookiesHandler,
@@ -9,30 +11,29 @@ import {
 import { SignTokenHandler, VerifyTokenHandler } from './app/plugins/auth';
 
 export type RequestUser = {
-  id: number;
+  id: string;
   username: string;
-};
-
-export type DecodedToken = RequestUser & {
-  iat: number;
-  exp: number;
 };
 
 declare module 'fastify' {
   interface FastifyInstance {
     user: RequestUser | null;
     deserializeUser: (request: FastifyRequest) => void;
-    addRefreshTokenToCookies: AddRefreshTokenToCookiesHandler;
-    addAccessTokenToCookies: AddAccessTokenToCookiesHandler;
-    getTokensFromCookies: GetTokensFromCookiesHandler;
     cookieConfig: CookiesConfig;
     signAccessToken: SignTokenHandler;
     signRefreshToken: SignTokenHandler;
     verifyToken: VerifyTokenHandler;
+    db: PrismaClient;
   }
 
   interface FastifyReply {
+    addRefreshTokenToCookies: AddRefreshTokenToCookiesHandler;
+    addAccessTokenToCookies: AddAccessTokenToCookiesHandler;
     removeAccessTokenFromCookies: RemoveTokenFromCookiesHandler;
     removeRefreshTokenFromCookies: RemoveTokenFromCookiesHandler;
+  }
+
+  interface FastifyRequest {
+    getTokensFromCookies: GetTokensFromCookiesHandler;
   }
 }
