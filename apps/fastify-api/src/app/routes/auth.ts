@@ -87,6 +87,8 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
       return { user: request.user };
     },
   });
+
+  fastify.log.info(`[ routes ] Auth routes loaded.`);
 };
 
 export default authPlugin;

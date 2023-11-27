@@ -5,13 +5,14 @@ import {
   AddRefreshTokenToCookiesHandler,
   GetTokensFromCookiesHandler,
 } from './app/plugins/cookies';
+import { logger } from './app/utils/logger';
 
 const host = process.env.HOST ?? 'localhost';
 const port = process.env.PORT ? Number(process.env.PORT) : 4444;
 
 // Instantiate Fastify with some config
 const server = Fastify({
-  logger: true,
+  logger: logger,
 });
 
 // Register your application as a normal plugin.
@@ -23,7 +24,7 @@ server.listen({ port, host }, (err) => {
     server.log.error(err);
     process.exit(1);
   } else {
-    console.log(`[ ready ] http://${host}:${port}`);
+    server.log.info(`[ ready ] http://${host}:${port}`);
   }
 });
 
@@ -31,7 +32,7 @@ server.listen({ port, host }, (err) => {
 ['SIGINT', 'SIGTERM'].forEach((signal) => {
   process.on(signal, () => {
     server.close().then(() => {
-      console.log(`[ close ] http://${host}:${port}`);
+      server.log.info(`[ close ] http://${host}:${port}`);
     });
   });
 });

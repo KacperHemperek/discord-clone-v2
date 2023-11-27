@@ -59,4 +59,6 @@ export default async function (fastify: FastifyInstance) {
       broadcast(message);
     });
   });
+
+  fastify.log.info(`[ routes ] WebSockets routes loaded.`);
 }

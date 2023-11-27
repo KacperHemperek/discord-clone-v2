@@ -9,4 +9,5 @@ import sensible from '@fastify/sensible';
  */
 export default fp(async function (fastify: FastifyInstance) {
   fastify.register(sensible);
+  fastify.log.info(`[ plugin ] Sensible plugin loaded.`);
 });

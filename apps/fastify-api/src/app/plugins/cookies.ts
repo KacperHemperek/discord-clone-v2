@@ -55,4 +55,6 @@ export default fastifyPlugin(async function (fastify) {
   fastify.decorate('addAccessTokenToCookies', addAccessTokenToCookies);
   fastify.decorate('addRefreshTokenToCookies', addRefreshTokenToCookies);
   fastify.decorate('getTokensFromCookies', getTokensFromCookies);
+
+  fastify.log.info(`[ plugin ] Cookies plugin loaded.`);
 });
