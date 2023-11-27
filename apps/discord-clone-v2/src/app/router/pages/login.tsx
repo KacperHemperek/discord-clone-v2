@@ -27,7 +27,7 @@ export default function LoginPage() {
     <div className='h-screen flex items-center justify-center text-gray-50 bg-brand'>
       <form
         onSubmit={handleUserLogin}
-        className='bg-gray-800 p-4 rounded-md flex flex-col gap-6 max-w-sm w-full'
+        className='bg-gray-800 p-4 rounded-xl flex flex-col gap-6 max-w-sm w-full'
       >
         <h1 className='text-2xl font-bold'>Login</h1>
         <div className='flex flex-col'>

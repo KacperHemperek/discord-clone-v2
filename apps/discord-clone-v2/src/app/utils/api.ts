@@ -8,5 +8,9 @@ export function api(path: string, options: RequestInit = {}) {
   return fetch(`${import.meta.env.VITE_API_URL}${path}`, {
     ...options,
     credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   });
 }

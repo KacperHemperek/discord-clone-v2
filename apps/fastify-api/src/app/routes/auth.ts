@@ -14,8 +14,9 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
         properties: {
           username: { type: 'string' },
           password: { type: 'string' },
+          confirmPassword: { type: 'string' },
         },
-        required: ['username', 'password'],
+        required: ['username', 'password', 'confirmPassword'],
       },
       response: {
         [StatusCodes.CREATED]: {
@@ -41,12 +42,17 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
     },
     handler: async (request, reply) => {
       const { username, password } = request.body;
-      const user = fastify.db.user.findFirst({ where: { username } });
+
+      const user = await fastify.db.user.findFirst({ where: { username } });
+
+      fastify.log.info(
+        `[ routes ] User ${username} trying to create account. \n ${user}`
+      );
 
       if (user) {
         reply
           .status(StatusCodes.UNAUTHORIZED)
-          .send({ message: 'User already exists' });
+          .send({ message: 'User with that username already exists' });
         return await reply;
       }
 

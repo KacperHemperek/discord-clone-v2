@@ -6,4 +6,5 @@ export type AuthLoginRequestBody = {
 export type AuthRegisterRequestBody = {
   username: string;
   password: string;
+  confirmPassword: string;
 };
