@@ -6,9 +6,16 @@ import {
   RemoveTokenFromCookiesHandler,
 } from './app/plugins/cookies';
 
-type RequestUser = {
-  id: string;
+import { SignTokenHandler, VerifyTokenHandler } from './app/plugins/auth';
+
+export type RequestUser = {
+  id: number;
   username: string;
+};
+
+export type DecodedToken = RequestUser & {
+  iat: number;
+  exp: number;
 };
 
 declare module 'fastify' {
@@ -21,5 +28,8 @@ declare module 'fastify' {
     removeAccessTokenFromCookies: RemoveTokenFromCookiesHandler;
     removeRefreshTokenFromCookies: RemoveTokenFromCookiesHandler;
     authCookieOptions: CookieSerializeOptions;
+    signAccessToken: SignTokenHandler;
+    signRefreshToken: SignTokenHandler;
+    verifyAccessToken: VerifyTokenHandler;
   }
 }

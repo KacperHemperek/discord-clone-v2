@@ -1,12 +1,13 @@
+import { RequestUser } from 'apps/fastify-api/src';
 import { FastifyPluginCallback } from 'fastify';
 
-type User = {
+type DbUser = {
   id: number;
   username: string;
   password: string;
 };
 
-const users: User[] = [
+const users: DbUser[] = [
   {
     id: 1,
     username: 'admin',
@@ -20,7 +21,7 @@ const users: User[] = [
 ];
 
 const authPlugin: FastifyPluginCallback = async (fastify) => {
-  fastify.post<{ Body: User }>('/login', {
+  fastify.post<{ Body: DbUser }>('/login', {
     schema: {
       body: {
         type: 'object',
@@ -55,18 +56,14 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
         return await reply;
       }
 
-      const userObj = {
+      const userObj: RequestUser = {
         id: user.id,
         username: user.username,
       };
 
-      const accessToken = fastify.jwt.sign(userObj, {
-        expiresIn: '20s',
-      });
+      const accessToken = await fastify.signAccessToken(userObj);
 
-      const refreshToken = fastify.jwt.sign(userObj, {
-        expiresIn: '7d',
-      });
+      const refreshToken = await fastify.signRefreshToken(userObj);
 
       fastify.addAccessTokenToCookies(reply, accessToken);
       fastify.addRefreshTokenToCookies(reply, refreshToken);
