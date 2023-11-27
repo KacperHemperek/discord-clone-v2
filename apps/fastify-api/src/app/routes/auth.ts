@@ -80,9 +80,6 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
 
   fastify.post('/logout', {
     handler: async (request, reply) => {
-      logger.info(
-        `Request cookies pre removal: ${JSON.stringify(request.cookies)}`
-      );
       reply.removeAccessTokenFromCookies();
       reply.removeRefreshTokenFromCookies();
 
