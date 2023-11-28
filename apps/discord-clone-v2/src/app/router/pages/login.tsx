@@ -29,6 +29,7 @@ export default function LoginPage() {
     },
     onError: (error) => {
       console.log(error);
+      form.reset();
     },
   });
 
