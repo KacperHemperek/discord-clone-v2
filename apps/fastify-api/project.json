@@ -44,7 +44,8 @@
       },
       "configurations": {
         "development": {
-          "buildTarget": "fastify-api:build:development"
+          "buildTarget": "fastify-api:build:development",
+          "host": "0.0.0.0"
         },
         "production": {
           "buildTarget": "fastify-api:build:production"

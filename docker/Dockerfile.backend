@@ -1,0 +1,32 @@
+FROM node:20-alpine as build
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+WORKDIR /app
+
+COPY . .
+
+RUN pnpm install
+RUN pnpm migrate
+RUN pnpm generate
+
+RUN pnpm nx run fastify-api:build:production
+
+FROM node:20-alpine as production
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+WORKDIR /app
+COPY --from=build /app/dist/apps/fastify-api api
+COPY --from=build /app/node_modules node_modules
+
+RUN addgroup --system api && \
+  adduser --system -G api api
+
+CMD ["node", "api"]
+EXPOSE 4444
+
+

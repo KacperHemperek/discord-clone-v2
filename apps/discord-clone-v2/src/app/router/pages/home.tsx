@@ -33,7 +33,7 @@ export default function HomePage() {
             className='font-semibold bg-green-500 p-2 rounded-md text-slate-50'
             to='/login'
           >
-            Login
+            Login test
           </Link>
           <Link
             className='font-semibold bg-green-500 p-2 rounded-md text-slate-50'
