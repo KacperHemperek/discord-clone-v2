@@ -23,7 +23,8 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.backend.rule=(Host(`dc-clone.kacperhemperek.com`) && PathPrefix(`/api`))"
-      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.entrypoints=web"
+
 
   traefik:
     image: traefik:v2.10
