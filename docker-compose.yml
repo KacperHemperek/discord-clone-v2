@@ -42,4 +42,4 @@ services:
       - ./traefik/ssl/:/letsencrypt/
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.dc-traefik.rule=(Host(`dc-clone.kacperhemperek.com`) && PathPrefix(`/traefik`))"
+      - "traefik.http.routers.traefik.rule=(Host(`dc-clone.kacperhemperek.com`) && PathPrefix(`/traefik`))"
