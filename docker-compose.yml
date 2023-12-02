@@ -19,9 +19,11 @@ services:
     environment:
       - PORT=4444
       - HOST=0.0.0.0
+    restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.backend.rule=(Host(`dc-clone.kacperhemperek.com`) && PathPrefix(`/api/`))"
+      - "traefik.http.routers.backend.rule=(Host(`dc-clone.kacperhemperek.com`) && PathPrefix(`/api`))"
+      - "traefik.http.routers.backend.entrypoints=websecure"
 
   traefik:
     image: traefik:v2.10
@@ -29,5 +31,8 @@ services:
     ports:
       - 80:80
       - 8080:8080
+      - 433:433
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.yml:/etc/traefik/traefik.yml
+      - ./traefik/ssl/:/letsencrypt/
