@@ -1,18 +1,18 @@
 version: '3.3'
 
 services:
-  frontend:
-    image: frontend
-    container_name: frontend
+  dc-frontend:
+    image: dc-frontend
+    container_name: dc-frontend
     build:
       context: ./
       dockerfile: ./docker/Dockerfile.frontend
     ports:
       - 5000:433
       - 5000:80
-  backend:
-    image: backend
-    container_name: backend
+  dc-backend:
+    image: dc-backend
+    container_name: dc-backend
     build:
       context: ./
       dockerfile: ./docker/Dockerfile.backend
@@ -24,12 +24,13 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=(Host(`dc-clone.kacperhemperek.com`) && PathPrefix(`/api`))"
-      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.dc-backend.rule=(Host(`dc-clone.kacperhemperek.com`) && PathPrefix(`/api`))"
+      - "traefik.http.routers.dc-backend.entrypoints=websecure"
 
 
   traefik:
     image: traefik:v2.10
+    container_name: dc-traefik
     command: --api.insecure=true --providers.docker
     ports:
       - 80:80
@@ -41,4 +42,4 @@ services:
       - ./traefik/ssl/:/letsencrypt/
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik.rule=(Host(`dc-clone.kacperhemperek.com`) && PathPrefix(`/traefik`))"
+      - "traefik.http.routers.dc-traefik.rule=(Host(`dc-clone.kacperhemperek.com`) && PathPrefix(`/traefik`))"
