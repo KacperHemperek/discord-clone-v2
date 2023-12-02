@@ -1,0 +1,33 @@
+version: '3.3'
+
+services:
+  frontend:
+    image: frontend
+    build:
+      context: ./
+      dockerfile: ./docker/Dockerfile.frontend
+    ports:
+      - 5000:433
+      - 5000:80
+  backend:
+    image: backend
+    build:
+      context: ./
+      dockerfile: ./docker/Dockerfile.backend
+    ports:
+      - 4444:4444
+    environment:
+      - PORT=4444
+      - HOST=0.0.0.0
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.backend.rule=(Host(`dc-clone.kacperhemperek.com`) && PathPrefix(`/api/`))"
+
+  traefik:
+    image: traefik:v2.10
+    command: --api.insecure=true --providers.docker
+    ports:
+      - 80:80
+      - 8080:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
