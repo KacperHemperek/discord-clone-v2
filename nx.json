@@ -58,8 +58,7 @@
         "linter": "eslint",
         "bundler": "vite",
         "babel": true,
-        "port": "4201",
-        "host": "0.0.0.0"
+        "port": "4200"
       },
       "component": {
         "style": "css"

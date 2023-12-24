@@ -9,6 +9,8 @@ COPY . .
 
 RUN pnpm install
 
-CMD ["pnpm", "dev:client"]
+RUN pnpm generate
+
+CMD ["pnpm", "dev:server"]
 
 EXPOSE 4200

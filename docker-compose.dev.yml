@@ -1,0 +1,12 @@
+version: '3.3'
+
+services:
+  api:
+    container_name: discord-api
+    image: discord-api-image
+    build:
+      dockerfile: ./docker/Dockerfile.backend.dev
+      context: .
+    volumes:
+      - ./apps/fastify-api:/app/apps/fastify-api
+

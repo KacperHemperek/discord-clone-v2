@@ -4,8 +4,8 @@
   "license": "MIT",
   "scripts": {
     "generate": "pnpm prisma generate --schema=./apps/fastify-api/src/prisma/schema.prisma",
-    "dev:server": "pnpm nx serve fastify-api",
-    "dev:client": "pnpm nx serve discord-clone-v2",
+    "dev:server": "pnpm dlx nx serve fastify-api",
+    "dev:client": "pnpm dlx nx serve discord-clone-v2",
     "studio": "pnpm prisma studio --schema=./apps/fastify-api/src/prisma/schema.prisma",
     "migrate": "pnpm prisma migrate dev --schema=./apps/fastify-api/src/prisma/schema.prisma"
   },

@@ -14,7 +14,7 @@ export interface AppOptions {}
 export async function app(fastify: FastifyInstance) {
   // installed plugins
   await fastify.register(cors, {
-    origin: 'http://localhost:4200',
+    origin: 'http://0.0.0.0:4200',
     credentials: true,
   });
   fastify.register(websocket);
