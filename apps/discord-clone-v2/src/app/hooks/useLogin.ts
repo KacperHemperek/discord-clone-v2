@@ -2,8 +2,8 @@ import { useMutation } from '@tanstack/react-query';
 import { api } from '../utils/api';
 
 import type { AuthUser } from '@shared-types/user';
-import type { AuthLoginRequestBody } from '@api/types/auth';
 import { MutationHookOptions } from '../types/utils';
+import { AuthLoginRequestBody } from '@api/types/auth';
 
 type AuthLoginMutationOptions = MutationHookOptions<
   AuthUser,

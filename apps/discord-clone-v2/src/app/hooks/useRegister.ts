@@ -14,10 +14,12 @@ export function useRegister(options?: RegisterMutationOptions) {
   return useMutation({
     ...options,
     mutationFn: async (data) => {
-      console.log({ data });
       const res = await api('/auth/register', {
         method: 'POST',
         body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!res.ok) {

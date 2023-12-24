@@ -1,10 +1,11 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
 import { useRegister } from '../../hooks/useRegister';
 import { useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
+import Input from '../../components/Input';
 
 const registerFormSchema = z
   .object({
@@ -13,7 +14,7 @@ const registerFormSchema = z
       .string()
       .regex(
         /^(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{10,32}$/,
-        'password does not meet requirements'
+        'Password does not meet requirements'
       ),
     confirmPassword: z.string(),
   })
@@ -29,6 +30,7 @@ export default function RegisterPage() {
   const navigate = useNavigate();
   const form = useForm<RegisterFormSchema>({
     resolver: zodResolver(registerFormSchema),
+    mode: 'onSubmit',
   });
   const { mutate: register } = useRegister({
     onError: (error) => {
@@ -45,70 +47,58 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className='flex h-screen items-center justify-center text-gray-50 bg-dc-purple-500'>
+    <div className='flex h-screen items-center justify-center text-gray-50 bg-neutral-800'>
       <form
         onSubmit={form.handleSubmit(handleUserRegister)}
-        className='bg-dc-neutral-900 p-4 rounded-md flex flex-col max-w-lg w-full'
+        className='bg-dc-neutral-900 p-4 rounded-md flex flex-col max-w-lg w-full shadow-sm'
       >
         <h1 className='text-2xl font-semibold text-center pb-2'>
           Create an account
         </h1>
         <div className='flex flex-col pb-6'>
-          <label
-            htmlFor='email'
-            className='uppercase text-xs font-bold text-dc-neutral-300 pb-3'
-          >
-            Username
-          </label>
-          <input
-            {...form.register('username')}
-            type='text'
-            id='username'
-            className='w-full p-2 rounded-sm bg-dc-neutral-950'
+          <Controller
+            control={form.control}
+            name='username'
+            render={({ field, formState: { errors } }) => (
+              <Input
+                {...field}
+                error={errors.username?.message}
+                type='text'
+                id='username'
+                label='Username'
+              />
+            )}
           />
-          {form.formState.errors.username && (
-            <p className='text-xs text-rose-500 pt-1'>
-              {form.formState.errors.username.message}
-            </p>
-          )}
+        </div>
+        <div className='pb-6'>
+          <Controller
+            control={form.control}
+            name='password'
+            render={({ field, formState: { errors } }) => (
+              <Input
+                {...field}
+                error={errors.password?.message}
+                type='password'
+                id='password'
+                label='Password'
+              />
+            )}
+          />
         </div>
         <div className='flex flex-col pb-6'>
-          <label
-            htmlFor='email'
-            className='uppercase text-xs font-bold text-dc-neutral-300 pb-3'
-          >
-            Password
-          </label>
-          <input
-            {...form.register('password')}
-            type='password'
-            id='username'
-            className='w-full p-2 rounded-sm bg-dc-neutral-950'
+          <Controller
+            control={form.control}
+            name='confirmPassword'
+            render={({ field, formState: { errors } }) => (
+              <Input
+                {...field}
+                error={errors.confirmPassword?.message}
+                type='password'
+                id='confirmPassword'
+                label='Confirm Password'
+              />
+            )}
           />
-          {form.formState.errors.password && (
-            <p className='text-xs text-rose-500 pt-1'>
-              {form.formState.errors.password.message}
-            </p>
-          )}
-        </div>
-        <div className='flex flex-col pb-6'>
-          <label
-            htmlFor='email'
-            className='uppercase text-xs font-bold text-dc-neutral-300 pb-3'
-          >
-            Confirm Password
-          </label>
-          <input
-            {...form.register('confirmPassword')}
-            type='password'
-            id='username'
-            className='w-full p-2 rounded-sm bg-dc-neutral-950'
-          />
-          {form.formState.errors.confirmPassword && (
-            <p className='text-xs text-rose-500 pt-1'>
-              {form.formState.errors.confirmPassword.message}
-            </p>
-          )}
         </div>
         <button
           className='bg-green rounded-sm bg-dc-purple-500 p-3 mb-4 font-semibold'
@@ -139,7 +129,7 @@ export default function RegisterPage() {
             at least 1 special character
           </li>
         </ul>
-        <Link to='/login' className='text-sm text-sky-500'>
+        <Link to='/login' className='text-sm text-sky-500 max-w-fit'>
           Already have and account?
         </Link>
       </form>
