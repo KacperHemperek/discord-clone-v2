@@ -16,12 +16,12 @@ export default function HomePage() {
   });
 
   return (
-    <div className='flex flex-col h-screen bg-brand items-center justify-center'>
+    <div className='flex flex-col h-screen bg-dc-purple-400 items-center justify-center'>
       {user ? (
         <>
           {user.username}
           <button
-            className='font-semibold bg-green-500 p-2 rounded-md text-slate-50'
+            className='font-semibold bg-dc-green-600 p-2 rounded-md text-slate-50'
             onClick={() => logout()}
           >
             Logout

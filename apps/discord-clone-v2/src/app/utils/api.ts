@@ -9,7 +9,6 @@ export function api(path: string, options: RequestInit = {}) {
     ...options,
     credentials: 'include',
     headers: {
-      'Content-Type': 'application/json',
       ...options.headers,
     },
   });

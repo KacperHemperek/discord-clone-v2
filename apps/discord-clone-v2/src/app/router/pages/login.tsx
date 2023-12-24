@@ -38,10 +38,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className='h-screen flex items-center justify-center text-gray-50 bg-brand'>
+    <div className='h-screen flex items-center justify-center text-gray-50 bg-dc-purple-400'>
       <form
         onSubmit={form.handleSubmit(handleUserLogin)}
-        className='bg-gray-800 p-4 rounded-xl flex flex-col gap-6 max-w-sm w-full'
+        className='bg-dc-neutral-900 p-4 rounded-md flex flex-col gap-6 max-w-sm w-full'
       >
         <h1 className='text-2xl font-bold'>Login</h1>
         <div className='flex flex-col'>
