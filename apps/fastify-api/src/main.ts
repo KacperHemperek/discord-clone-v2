@@ -2,8 +2,8 @@ import Fastify from 'fastify';
 import { app } from './app/app';
 import { logger } from './app/utils/logger';
 
-const host = process.env.HOST ?? 'localhost';
-const port = process.env.PORT ? Number(process.env.PORT) : 4444;
+const host = process.env.BE_HOST ?? 'localhost';
+const port = process.env.BE_PORT ? Number(process.env.BE_PORT) : 4444;
 
 // Instantiate Fastify with some config
 const server = Fastify({

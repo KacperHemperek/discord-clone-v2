@@ -63,7 +63,7 @@ export default function LoginPage() {
           <input
             {...form.register('password')}
             type='password'
-            id='username'
+            id='password'
             className='w-full p-2 rounded-md bg-gray-700'
           />
           {form.formState.errors.password && (

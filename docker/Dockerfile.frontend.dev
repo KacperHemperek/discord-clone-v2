@@ -11,6 +11,6 @@ RUN pnpm install
 
 RUN pnpm generate
 
-CMD ["pnpm", "dev:server"]
+CMD ["pnpm", "dev:client"]
 
-EXPOSE 4444
+EXPOSE 4200

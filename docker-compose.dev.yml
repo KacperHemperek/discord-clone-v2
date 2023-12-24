@@ -9,4 +9,22 @@ services:
       context: .
     volumes:
       - ./apps/fastify-api:/app/apps/fastify-api
+    ports:
+      - ${BE_PORT}:${BE_PORT}
+    env_file:
+      - .env
+
+  frontend:
+    container_name: discord-frontend
+    image: discord-frontend-image
+    build:
+      dockerfile: ./docker/Dockerfile.frontend.dev
+      context: .
+    ports:
+      - 4200:4200
+    volumes:
+      - ./apps/discord-clone-v2:/app/apps/discord-clone-v2
+    env_file:
+      - .env
+
 
