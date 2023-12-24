@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
 import { useRegister } from '../../hooks/useRegister';
 import { useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const registerFormSchema = z
   .object({
@@ -13,7 +13,7 @@ const registerFormSchema = z
       .string()
       .regex(
         /^(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{10,32}$/,
-        'Password must have between 10 to 32 characters contain at least 1 uppercase letter, 1 number, and 1 special character'
+        'password does not meet requirements'
       ),
     confirmPassword: z.string(),
   })
@@ -45,19 +45,26 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className='flex h-screen items-center justify-center text-gray-50 bg-brand'>
+    <div className='flex h-screen items-center justify-center text-gray-50 bg-dc-purple-500'>
       <form
         onSubmit={form.handleSubmit(handleUserRegister)}
-        className='bg-gray-800 p-4 rounded-xl flex flex-col gap-6 max-w-sm w-full'
+        className='bg-dc-neutral-900 p-4 rounded-md flex flex-col max-w-lg w-full'
       >
-        <h1 className='text-2xl font-bold'>Register</h1>
-        <div className='flex flex-col'>
-          <label htmlFor='email'>Username</label>
+        <h1 className='text-2xl font-semibold text-center pb-2'>
+          Create an account
+        </h1>
+        <div className='flex flex-col pb-6'>
+          <label
+            htmlFor='email'
+            className='uppercase text-xs font-bold text-dc-neutral-300 pb-3'
+          >
+            Username
+          </label>
           <input
             {...form.register('username')}
             type='text'
             id='username'
-            className='w-full p-2 rounded-md bg-gray-700'
+            className='w-full p-2 rounded-sm bg-dc-neutral-950'
           />
           {form.formState.errors.username && (
             <p className='text-xs text-rose-500 pt-1'>
@@ -65,13 +72,18 @@ export default function RegisterPage() {
             </p>
           )}
         </div>
-        <div className='flex flex-col'>
-          <label htmlFor='email'>Password</label>
+        <div className='flex flex-col pb-6'>
+          <label
+            htmlFor='email'
+            className='uppercase text-xs font-bold text-dc-neutral-300 pb-3'
+          >
+            Password
+          </label>
           <input
             {...form.register('password')}
             type='password'
             id='username'
-            className='w-full p-2 rounded-md bg-gray-700'
+            className='w-full p-2 rounded-sm bg-dc-neutral-950'
           />
           {form.formState.errors.password && (
             <p className='text-xs text-rose-500 pt-1'>
@@ -79,13 +91,18 @@ export default function RegisterPage() {
             </p>
           )}
         </div>
-        <div className='flex flex-col'>
-          <label htmlFor='email'>Password</label>
+        <div className='flex flex-col pb-6'>
+          <label
+            htmlFor='email'
+            className='uppercase text-xs font-bold text-dc-neutral-300 pb-3'
+          >
+            Confirm Password
+          </label>
           <input
             {...form.register('confirmPassword')}
             type='password'
             id='username'
-            className='w-full p-2 rounded-md bg-gray-700'
+            className='w-full p-2 rounded-sm bg-dc-neutral-950'
           />
           {form.formState.errors.confirmPassword && (
             <p className='text-xs text-rose-500 pt-1'>
@@ -93,9 +110,38 @@ export default function RegisterPage() {
             </p>
           )}
         </div>
-        <button className='bg-green rounded-md bg-green-500 p-2' type='submit'>
-          Login
+        <button
+          className='bg-green rounded-sm bg-dc-purple-500 p-3 mb-4 font-semibold'
+          type='submit'
+        >
+          Register
         </button>
+        <ul className='pb-2 text-sm text-neutral-400'>
+          <h2>Password must have:</h2>
+          <li className='flex gap-2 items-center pl-1'>
+            {' '}
+            <span className='w-1 h-1 rounded-full bg-dc-green-300' />
+            between 10 to 32 characters 1 special character
+          </li>
+          <li className='flex gap-2 items-center pl-1'>
+            {' '}
+            <span className='w-1 h-1 rounded-full bg-dc-green-300' />
+            at least 1 uppercase letter
+          </li>
+          <li className='flex gap-2 items-center pl-1'>
+            {' '}
+            <span className='w-1 h-1 rounded-full bg-dc-green-300' />
+            at least 1 number
+          </li>
+          <li className='flex gap-2 items-center pl-1'>
+            {' '}
+            <span className='w-1 h-1 rounded-full bg-dc-green-300' />
+            at least 1 special character
+          </li>
+        </ul>
+        <Link to='/login' className='text-sm text-sky-500'>
+          Already have and account?
+        </Link>
       </form>
     </div>
   );
