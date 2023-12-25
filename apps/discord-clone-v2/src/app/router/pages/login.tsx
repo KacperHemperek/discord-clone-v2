@@ -24,11 +24,6 @@ export default function LoginPage() {
   });
 
   const { mutate: login } = useLogin({
-    onSuccess: (data) => {
-      console.log(data);
-
-      navigate('/friends');
-    },
     onError: (error) => {
       console.log(error);
       form.reset();
