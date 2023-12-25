@@ -138,7 +138,7 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
       if (!user || user.password !== password) {
         return await reply
           .status(StatusCodes.UNAUTHORIZED)
-          .send({ message: 'Invalid credentials' });
+          .send({ message: 'Invalid username or password' });
       }
 
       const userObj = {

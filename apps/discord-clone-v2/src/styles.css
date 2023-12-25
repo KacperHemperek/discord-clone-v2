@@ -79,6 +79,12 @@
   --dc-neutral-950: 34 37 42;
 }
 
+@layer base {
+  * {
+    @apply focus-visible:ring-2 focus-visible:ring-sky-500 outline-none;
+  }
+}
+
 @font-face {
   font-family: 'DiscordFont';
   src: url(./assets/fonts/ggsans-Normal.ttf);

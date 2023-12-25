@@ -30,6 +30,12 @@ export default function LoginPage() {
     onError: (error) => {
       console.log(error);
       form.reset();
+      form.setError('username', {
+        message: 'Invalid username or password',
+      });
+      form.setError('password', {
+        message: 'Invalid username or password',
+      });
     },
   });
 
