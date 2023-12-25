@@ -22,7 +22,7 @@ export default function AuthGuard() {
     return !!match;
   };
 
-  const protectedRoutes = ['/friends/*'];
+  const protectedRoutes = ['/home/*'];
 
   const redirectUserIfLoggedIn = ['/login', '/register'];
   const matchesProtected = protectedRoutes.some(filterMatch);
@@ -37,7 +37,7 @@ export default function AuthGuard() {
   }
 
   if (isRoot && user) {
-    return <Navigate to='/friends' />;
+    return <Navigate to='/home/friends' />;
   }
 
   if (isRoot && !user) {
@@ -45,7 +45,7 @@ export default function AuthGuard() {
   }
 
   if (user && matchesRedirectUserIfLoggedIn) {
-    return <Navigate to='/friends' />;
+    return <Navigate to='/home/friends' />;
   }
 
   if (!user && matchesProtected) {

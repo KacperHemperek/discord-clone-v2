@@ -37,7 +37,7 @@ export function useRegister(options?: RegisterMutationOptions) {
     },
     onSuccess: (data, variables, context) => {
       queryClient.setQueryData(['user'], data);
-      navigate('/friends');
+      navigate('/home/friends');
       options?.onSuccess?.(data, variables, context);
     },
   });

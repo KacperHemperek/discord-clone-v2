@@ -11,11 +11,11 @@ export const router = createBrowserRouter([
     element: <AuthGuard />,
     children: [
       {
-        path: '/friends',
+        path: '/home',
         element: <BaseLayout />,
         children: [
           {
-            path: '/friends',
+            path: '/home/friends',
             element: <FriendsPage />,
           },
         ],

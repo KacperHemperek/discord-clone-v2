@@ -38,7 +38,7 @@ export function useLogin(options?: AuthLoginMutationOptions) {
     },
     onSuccess: (data, variables, context) => {
       queryClient.setQueryData(['user'], data);
-      navigate('/friends');
+      navigate('/home/friends');
       options?.onSuccess?.(data, variables, context);
     },
   });
