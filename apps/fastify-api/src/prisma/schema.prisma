@@ -11,4 +11,24 @@ model User {
   id       String @id @default(uuid())
   username String
   password String
+
+  active Boolean @default(false)
+
+  invited   Friendship[] @relation("invited")
+  invitedBy Friendship[] @relation("invitedBy")
+}
+
+model Friendship {
+  id String @id @default(uuid())
+
+  accepted    Boolean   @default(false)
+  requestedAt DateTime  @default(now())
+  acceptedAt  DateTime?
+
+  inviter  User   @relation("invitedBy", fields: [userId], references: [id])
+  userId   String
+  invitee  User   @relation("invited", fields: [friendId], references: [id])
+  friendId String
+
+  @@unique([userId, friendId])
 }

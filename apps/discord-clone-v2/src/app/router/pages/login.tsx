@@ -25,7 +25,7 @@ export default function LoginPage() {
 
   const { mutate: login } = useLogin({
     onSuccess: () => {
-      navigate('/');
+      navigate('/friends');
     },
     onError: (error) => {
       console.log(error);

@@ -38,7 +38,7 @@ export default function RegisterPage() {
     },
     onSuccess: (data) => {
       queryClient.setQueryData(['user'], data);
-      navigate('/');
+      navigate('/friends');
     },
   });
 

@@ -1,8 +1,9 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
 import { useLogout } from '../../hooks/useLogout';
 import { useQueryClient } from '@tanstack/react-query';
-export default function HomePage() {
+import { useAuth } from '../../context/AuthProvider';
+
+export default function FriendsPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -16,7 +17,7 @@ export default function HomePage() {
   });
 
   return (
-    <div className='flex flex-col h-screen bg-dc-purple-400 items-center justify-center'>
+    <div className='flex flex-col flex-grow items-center justify-center'>
       {user ? (
         <>
           {user.username}

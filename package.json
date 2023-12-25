@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "generate": "pnpm prisma generate --schema=./apps/fastify-api/src/prisma/schema.prisma",
+    "push": "pnpm prisma db push --schema=./apps/fastify-api/src/prisma/schema.prisma",
     "dev:server": "pnpm dlx nx serve fastify-api",
     "dev:client": "pnpm dlx nx serve discord-clone-v2",
     "studio": "pnpm prisma studio --schema=./apps/fastify-api/src/prisma/schema.prisma",
@@ -31,6 +32,7 @@
     "fastify": "~4.16.0",
     "fastify-plugin": "~4.5.0",
     "http-status-codes": "^2.3.0",
+    "lucide-react": "^0.302.0",
     "pino": "^8.16.2",
     "pino-pretty": "^10.2.3",
     "prisma": "^5.6.0",
