@@ -3,8 +3,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
 import { useRegister } from '../../hooks/useRegister';
-import { useQueryClient } from '@tanstack/react-query';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Input from '../../components/Input';
 
 const registerFormSchema = z
@@ -26,22 +25,15 @@ const registerFormSchema = z
 type RegisterFormSchema = z.infer<typeof registerFormSchema>;
 
 export default function RegisterPage() {
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
   const form = useForm<RegisterFormSchema>({
     resolver: zodResolver(registerFormSchema),
     mode: 'onSubmit',
   });
   const { mutate: register } = useRegister({
     onError: (error) => {
-      console.error(error.message);
       form.setError('username', { message: error.message });
       form.setError('password', { message: error.message });
       form.setError('confirmPassword', { message: error.message });
-    },
-    onSuccess: (data) => {
-      queryClient.setQueryData(['user'], data);
-      navigate('/friends');
     },
   });
 

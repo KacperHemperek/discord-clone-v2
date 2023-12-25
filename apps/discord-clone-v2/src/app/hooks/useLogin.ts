@@ -1,9 +1,10 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../utils/api';
 
 import type { AuthUser } from '@shared-types/user';
 import { MutationHookOptions } from '../types/utils';
 import { AuthLoginRequestBody } from '@api/types/auth';
+import { useNavigate } from 'react-router-dom';
 
 type AuthLoginMutationOptions = MutationHookOptions<
   AuthUser,
@@ -12,6 +13,10 @@ type AuthLoginMutationOptions = MutationHookOptions<
 >;
 
 export function useLogin(options?: AuthLoginMutationOptions) {
+  const navigate = useNavigate();
+
+  const queryClient = useQueryClient();
+
   return useMutation({
     ...options,
     mutationFn: async (data) => {
@@ -29,7 +34,12 @@ export function useLogin(options?: AuthLoginMutationOptions) {
         throw new Error(json.message);
       }
 
-      return json as AuthUser;
+      return json.user as AuthUser;
+    },
+    onSuccess: (data, variables, context) => {
+      queryClient.setQueryData(['user'], data);
+      navigate('/friends');
+      options?.onSuccess?.(data, variables, context);
     },
   });
 }

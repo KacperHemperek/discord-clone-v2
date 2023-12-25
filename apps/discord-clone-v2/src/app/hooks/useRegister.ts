@@ -1,8 +1,9 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AuthUser } from '@shared-types/user';
 import { AuthRegisterRequestBody } from '@api/types/auth';
 import { MutationHookOptions } from '../types/utils';
 import { api } from '../utils/api';
+import { useNavigate } from 'react-router-dom';
 
 type RegisterMutationOptions = MutationHookOptions<
   AuthUser,
@@ -11,6 +12,10 @@ type RegisterMutationOptions = MutationHookOptions<
 >;
 
 export function useRegister(options?: RegisterMutationOptions) {
+  const navigate = useNavigate();
+
+  const queryClient = useQueryClient();
+
   return useMutation({
     ...options,
     mutationFn: async (data) => {
@@ -22,13 +27,18 @@ export function useRegister(options?: RegisterMutationOptions) {
         },
       });
 
-      if (!res.ok) {
-        const error = await res.json();
+      const json = await res.json();
 
-        throw new Error(error?.message ?? "Couldn't register");
+      if (!res.ok) {
+        throw new Error(json?.message ?? "Couldn't register");
       }
 
-      return res.json();
+      return json.user;
+    },
+    onSuccess: (data, variables, context) => {
+      queryClient.setQueryData(['user'], data);
+      navigate('/friends');
+      options?.onSuccess?.(data, variables, context);
     },
   });
 }
