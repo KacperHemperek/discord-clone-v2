@@ -1,5 +1,5 @@
 import { useLogin } from '../../hooks/useLogin';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { z } from 'zod';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,8 +13,6 @@ const LoginFormSchema = z.object({
 type LoginFormValues = z.infer<typeof LoginFormSchema>;
 
 export default function LoginPage() {
-  const navigate = useNavigate();
-
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(LoginFormSchema),
     defaultValues: {
