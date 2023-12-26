@@ -2,33 +2,24 @@ import { User } from '@prisma/client';
 import { FastifyPluginCallback } from 'fastify';
 import { StatusCodes } from 'http-status-codes';
 import type { AuthLoginRequestBody } from '@api/types/auth';
-import { RegisterUserBody } from './auth.schema';
+import {
+  GetLoggedInUserResponse,
+  LoginUserBody,
+  LoginUserSuccessfullyResponse,
+  LogoutUserSuccessfullyResponse,
+  RegisterUserBody,
+  RegisterUserCreatedResponse,
+} from './auth.schema';
 import { RegisterUserBodyType } from '@shared-types/auth';
+import { ErrorBaseResponse } from '@api/app/utils/error-response';
 
 const authPlugin: FastifyPluginCallback = async (fastify) => {
   fastify.post<{ Body: RegisterUserBodyType }>('/register', {
     schema: {
       body: RegisterUserBody,
       response: {
-        [StatusCodes.CREATED]: {
-          type: 'object',
-          properties: {
-            message: { type: 'string' },
-            user: {
-              type: 'object',
-              properties: {
-                id: { type: 'string' },
-                username: { type: 'string' },
-              },
-            },
-          },
-        },
-        [StatusCodes.UNAUTHORIZED]: {
-          type: 'object',
-          properties: {
-            message: { type: 'string' },
-          },
-        },
+        [StatusCodes.CREATED]: RegisterUserCreatedResponse,
+        [StatusCodes.UNAUTHORIZED]: ErrorBaseResponse,
       },
     },
     handler: async (request, reply) => {
@@ -94,33 +85,10 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
 
   fastify.post<{ Body: AuthLoginRequestBody }>('/login', {
     schema: {
-      body: {
-        type: 'object',
-        properties: {
-          username: { type: 'string' },
-          password: { type: 'string' },
-        },
-        required: ['username', 'password'],
-      },
+      body: LoginUserBody,
       response: {
-        [StatusCodes.OK]: {
-          type: 'object',
-          properties: {
-            user: {
-              type: 'object',
-              properties: {
-                id: { type: 'string' },
-                username: { type: 'string' },
-              },
-            },
-          },
-        },
-        [StatusCodes.UNAUTHORIZED]: {
-          type: 'object',
-          properties: {
-            message: { type: 'string' },
-          },
-        },
+        [StatusCodes.OK]: LoginUserSuccessfullyResponse,
+        [StatusCodes.UNAUTHORIZED]: ErrorBaseResponse,
       },
     },
     handler: async (request, reply) => {
@@ -151,35 +119,24 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
   });
 
   fastify.post('/logout', {
+    schema: {
+      response: {
+        [StatusCodes.OK]: LogoutUserSuccessfullyResponse,
+      },
+    },
     handler: async (_request, reply) => {
       reply.removeAccessTokenFromCookies();
       reply.removeRefreshTokenFromCookies();
 
-      return await reply.send({ message: 'Logged out' });
+      return await reply.status(StatusCodes.OK).send({ message: 'Logged out' });
     },
   });
 
   fastify.get('/me', {
     schema: {
       response: {
-        [StatusCodes.OK]: {
-          type: 'object',
-          properties: {
-            user: {
-              type: 'object',
-              properties: {
-                id: { type: 'string' },
-                username: { type: 'string' },
-              },
-            },
-          },
-        },
-        [StatusCodes.UNAUTHORIZED]: {
-          type: 'object',
-          properties: {
-            message: { type: 'string' },
-          },
-        },
+        [StatusCodes.OK]: GetLoggedInUserResponse,
+        [StatusCodes.UNAUTHORIZED]: ErrorBaseResponse,
       },
     },
     handler: async (request, reply) => {

@@ -1,15 +1,19 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../utils/api';
 
-import type { AuthUser } from '@shared-types/user';
+import type {
+  LoginUserSuccessfullyResponseType,
+  LoginUserBodyType,
+} from '@shared-types/auth';
+
+import type { ErrorBaseResponseType } from '@shared-types/error-response';
 import { MutationHookOptions } from '../types/utils';
-import { AuthLoginRequestBody } from '@api/types/auth';
 import { useNavigate } from 'react-router-dom';
 
 type AuthLoginMutationOptions = MutationHookOptions<
-  AuthUser,
+  LoginUserSuccessfullyResponseType['user'],
   Error,
-  AuthLoginRequestBody
+  LoginUserBodyType
 >;
 
 export function useLogin(options?: AuthLoginMutationOptions) {
@@ -28,13 +32,14 @@ export function useLogin(options?: AuthLoginMutationOptions) {
         body: JSON.stringify(data),
       });
 
-      const json = await res.json();
-
       if (!res.ok) {
+        const json = (await res.json()) as ErrorBaseResponseType;
         throw new Error(json.message);
       }
 
-      return json.user as AuthUser;
+      const json = (await res.json()) as LoginUserSuccessfullyResponseType;
+
+      return json.user;
     },
     onSuccess: (data, variables, context) => {
       queryClient.setQueryData(['user'], data);
