@@ -74,6 +74,7 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
       reply.addRefreshTokenToCookies(refreshToken);
 
       reply.code(StatusCodes.CREATED).send({
+        message: 'User successfully registered',
         user: {
           id,
           username,
@@ -112,6 +113,7 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
       reply.addRefreshTokenToCookies(refreshToken);
 
       reply.status(StatusCodes.OK).send({
+        message: 'User successfully logged in',
         user: { id: user.id, username: user.username },
       });
     },
