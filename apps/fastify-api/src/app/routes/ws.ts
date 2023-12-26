@@ -1,9 +1,5 @@
 import type { FastifyInstance } from 'fastify';
 
-function debug(...args: unknown[]) {
-  console.log('\n🚀 ====> ', ...args, '\n');
-}
-
 type Message = {
   sender: string;
   message: string;
@@ -19,8 +15,6 @@ export default async function (fastify: FastifyInstance) {
   const messages: Message[] = [];
 
   function broadcast(message: Message) {
-    debug('broadcast', message);
-
     fastify.websocketServer.clients.forEach((client) => {
       client.send(JSON.stringify(message));
     });
