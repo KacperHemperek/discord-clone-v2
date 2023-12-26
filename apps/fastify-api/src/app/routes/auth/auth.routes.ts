@@ -140,13 +140,8 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
         [StatusCodes.UNAUTHORIZED]: ErrorBaseResponse,
       },
     },
+    preHandler: fastify.auth([fastify.userRequired]),
     handler: async (request, reply) => {
-      if (!request.user) {
-        return await reply
-          .status(StatusCodes.UNAUTHORIZED)
-          .send({ message: 'User not logged in' });
-      }
-
       return await reply.status(StatusCodes.OK).send({ user: request.user });
     },
   });

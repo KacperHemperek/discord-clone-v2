@@ -29,10 +29,12 @@ export default fastifyPlugin(async function (fastify) {
   const accessTokenCookieConfig: CookieSerializeOptions = {
     ...authCookieOptions,
     maxAge: 20 * 1000,
+    path: '/',
   };
   const refreshTokenCookieConfig: CookieSerializeOptions = {
     ...authCookieOptions,
     maxAge: 7 * 24 * 60 * 60 * 1000,
+    path: '/',
   };
 
   const cookieConfig: CookiesConfig = {
@@ -48,7 +50,7 @@ export default fastifyPlugin(async function (fastify) {
   });
 
   function addAccessTokenToCookies(
-    accessToken
+    accessToken: string
   ): ReturnType<AddAccessTokenToCookiesHandler> {
     this.setCookie(
       fastify.cookieConfig.accessTokenName,
@@ -58,7 +60,7 @@ export default fastifyPlugin(async function (fastify) {
   }
 
   function addRefreshTokenToCookies(
-    refreshToken
+    refreshToken: string
   ): ReturnType<AddRefreshTokenToCookiesHandler> {
     this.setCookie(
       fastify.cookieConfig.refreshTokenName,

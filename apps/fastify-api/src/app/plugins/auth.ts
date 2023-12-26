@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
 import auth from '@fastify/auth';
+import { StatusCodes } from 'http-status-codes';
 
 type SignTokenPayload = {
   username: string;
@@ -16,7 +17,7 @@ export type DecodedUserToken = SignTokenPayload & {
 
 export type VerifyTokenHandler = (token: string) => Promise<DecodedUserToken>;
 
-export type SerializeUserHandler = (
+export type UserRequired = (
   request: FastifyRequest,
   reply: FastifyReply
 ) => void;
@@ -42,7 +43,7 @@ export default fastifyPlugin(async function (fastify) {
     return fastify.jwt.verify<DecodedUserToken>(token);
   };
 
-  const deserializeUser: SerializeUserHandler = async (
+  const userRequired: UserRequired = async (
     request: FastifyRequest,
     reply: FastifyReply
   ) => {
@@ -78,12 +79,14 @@ export default fastifyPlugin(async function (fastify) {
       }
       return;
     }
-
-    fastify.log.error(`[ plugin/auth ] User not verified.`);
+    reply
+      .status(StatusCodes.UNAUTHORIZED)
+      .send({ message: 'User not verified' });
+    throw new Error('User not verified');
   };
 
   fastify.decorate('signAccessToken', signAccessToken);
   fastify.decorate('signRefreshToken', signRefreshToken);
   fastify.decorate('verifyToken', verifyToken);
-  fastify.decorate('deserializeUser', deserializeUser);
+  fastify.decorate('userRequired', userRequired);
 });

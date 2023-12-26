@@ -18,7 +18,7 @@ export type RequestUser = {
 declare module 'fastify' {
   interface FastifyInstance {
     user: RequestUser | null;
-    deserializeUser: (request: FastifyRequest) => void;
+    userRequired: (request: FastifyRequest) => void;
     cookieConfig: CookiesConfig;
     signAccessToken: SignTokenHandler;
     signRefreshToken: SignTokenHandler;
