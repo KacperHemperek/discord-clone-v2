@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { useLogout } from '../../hooks/useLogout';
+import { LogOut } from 'lucide-react';
 
 export default function BaseLayout() {
   const { mutate } = useLogout();
@@ -21,9 +22,9 @@ export default function BaseLayout() {
         <div className='flex flex-col gap-2 px-2 pb-2'>
           <button
             onClick={logout}
-            className='w-10 h-10 rounded-lg bg-dc-neutral-500 flex items-center justify-center'
+            className='p-3  rounded-lg bg-dc-neutral-500 flex items-center justify-center'
           >
-            {'< |'}
+            <LogOut className='w-4 h-4' />
           </button>
         </div>
       </div>
