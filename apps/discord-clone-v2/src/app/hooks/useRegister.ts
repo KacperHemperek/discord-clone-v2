@@ -1,14 +1,18 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { AuthUser } from '@shared-types/user';
-import { AuthRegisterRequestBody } from '@api/types/auth';
+
 import { MutationHookOptions } from '../types/utils';
 import { api } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
+import {
+  RegisterUserBodyType,
+  RegisterUserCreatedResponseType,
+} from '@shared-types/auth';
+import { ErrorBaseResponseType } from '@shared-types/error-response';
 
 type RegisterMutationOptions = MutationHookOptions<
-  AuthUser,
+  RegisterUserCreatedResponseType['user'],
   Error,
-  AuthRegisterRequestBody
+  RegisterUserBodyType
 >;
 
 export function useRegister(options?: RegisterMutationOptions) {
@@ -27,11 +31,11 @@ export function useRegister(options?: RegisterMutationOptions) {
         },
       });
 
-      const json = await res.json();
-
       if (!res.ok) {
+        const json = (await res.json()) as ErrorBaseResponseType;
         throw new Error(json?.message ?? "Couldn't register");
       }
+      const json = (await res.json()) as RegisterUserCreatedResponseType;
 
       return json.user;
     },
