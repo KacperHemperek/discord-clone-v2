@@ -10,6 +10,7 @@ services:
     volumes:
       - ./apps/fastify-api:/app/apps/fastify-api
       - ./types:/app/types
+      - ./configs:/app/configs
     ports:
       - ${BE_PORT}:${BE_PORT}
     env_file:
@@ -26,6 +27,7 @@ services:
     volumes:
       - ./apps/discord-clone-v2:/app/apps/discord-clone-v2
       - ./types:/app/types
+      - ./configs:/app/configs
     env_file:
       - .env
 

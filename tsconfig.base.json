@@ -17,7 +17,8 @@
     "paths": {
       "@api/*": ["apps/fastify-api/src/*"],
       "@shared-types/*": ["types/*"],
-      "@web/*": ["apps/discord-clone-v2/src/*"]
+      "@web/*": ["apps/discord-clone-v2/src/*"],
+      "@configs/*": ["configs/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

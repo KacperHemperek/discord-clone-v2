@@ -13,6 +13,7 @@ import { SignTokenHandler, VerifyTokenHandler } from './app/plugins/auth';
 export type RequestUser = {
   id: string;
   username: string;
+  email: string;
 };
 
 declare module 'fastify' {
