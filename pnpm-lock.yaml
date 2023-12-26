@@ -23,6 +23,9 @@ dependencies:
   '@fastify/sensible':
     specifier: ~5.2.0
     version: 5.2.0
+  '@fastify/type-provider-typebox':
+    specifier: ^3.5.0
+    version: 3.5.0(@sinclair/typebox@0.32.3)
   '@fastify/websocket':
     specifier: ^8.2.0
     version: 8.2.0
@@ -32,6 +35,9 @@ dependencies:
   '@prisma/client':
     specifier: 5.6.0
     version: 5.6.0(prisma@5.6.0)
+  '@sinclair/typebox':
+    specifier: ^0.32.3
+    version: 0.32.3
   '@swc/helpers':
     specifier: ~0.5.2
     version: 0.5.3
@@ -2133,6 +2139,14 @@ packages:
       vary: 1.1.2
     dev: false
 
+  /@fastify/type-provider-typebox@3.5.0(@sinclair/typebox@0.32.3):
+    resolution: {integrity: sha512-f48uGzvLflE/y4pvXOS8qjAC+mZmlqev9CPHnB8NDsBSL4EbeydO61IgPuzOkeNlAYeRP9Y56UOKj1XWFibgMw==}
+    peerDependencies:
+      '@sinclair/typebox': '>=0.26 <=0.31'
+    dependencies:
+      '@sinclair/typebox': 0.32.3
+    dev: false
+
   /@fastify/websocket@8.2.0:
     resolution: {integrity: sha512-B4tlHFBKCX7tenEG9aUcQEpksW2e0+dgRTaH/05+cro1Xsq1+kSj+9IB9Gep7a0KbHZGrat+zBsOas6lRs5dFQ==}
     dependencies:
@@ -3212,6 +3226,10 @@ packages:
   /@sinclair/typebox@0.27.8:
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
     dev: true
+
+  /@sinclair/typebox@0.32.3:
+    resolution: {integrity: sha512-o1OzDySkCSEobAEAVS1SGrzznes9KqPOC3arGfH5rQhOIeokLQYLKQmy68lr979BmPr43v4m9d85ttUSRpHdFA==}
+    dev: false
 
   /@sindresorhus/is@4.6.0:
     resolution: {integrity: sha512-t09vSN3MdfsyCHoFcTRCH/iUtG7OJ0CsjzB8cjAmKc/va/kIgeDI/TxsigdncE/4be734m0cvIYwNaV4i2XqAw==}

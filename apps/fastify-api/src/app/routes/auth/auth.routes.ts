@@ -1,23 +1,14 @@
 import { User } from '@prisma/client';
 import { FastifyPluginCallback } from 'fastify';
 import { StatusCodes } from 'http-status-codes';
-import type {
-  AuthLoginRequestBody,
-  AuthRegisterRequestBody,
-} from '@api/types/auth';
+import type { AuthLoginRequestBody } from '@api/types/auth';
+import { RegisterUserBody } from './auth.schema';
+import { RegisterUserBodyType } from '@shared-types/auth';
 
 const authPlugin: FastifyPluginCallback = async (fastify) => {
-  fastify.post<{ Body: AuthRegisterRequestBody }>('/register', {
+  fastify.post<{ Body: RegisterUserBodyType }>('/register', {
     schema: {
-      body: {
-        type: 'object',
-        properties: {
-          username: { type: 'string' },
-          password: { type: 'string' },
-          confirmPassword: { type: 'string' },
-        },
-        required: ['username', 'password', 'confirmPassword'],
-      },
+      body: RegisterUserBody,
       response: {
         [StatusCodes.CREATED]: {
           type: 'object',
