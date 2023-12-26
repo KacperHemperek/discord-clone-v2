@@ -1,7 +1,6 @@
 import { User } from '@prisma/client';
 import { FastifyPluginCallback } from 'fastify';
 import { StatusCodes } from 'http-status-codes';
-import type { AuthLoginRequestBody } from '@api/types/auth';
 import {
   GetLoggedInUserResponse,
   LoginUserBody,
@@ -10,8 +9,8 @@ import {
   RegisterUserBody,
   RegisterUserCreatedResponse,
 } from './auth.schema';
-import { RegisterUserBodyType } from '@shared-types/auth';
-import { ErrorBaseResponse } from '@api/app/utils/error-response';
+import { LoginUserBodyType, RegisterUserBodyType } from '@shared-types/auth';
+import { ErrorBaseResponse } from '../../utils/error-response';
 
 const authPlugin: FastifyPluginCallback = async (fastify) => {
   fastify.post<{ Body: RegisterUserBodyType }>('/register', {
@@ -83,7 +82,7 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
     },
   });
 
-  fastify.post<{ Body: AuthLoginRequestBody }>('/login', {
+  fastify.post<{ Body: LoginUserBodyType }>('/login', {
     schema: {
       body: LoginUserBody,
       response: {

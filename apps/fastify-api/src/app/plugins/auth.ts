@@ -1,11 +1,15 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
 import auth from '@fastify/auth';
-import { AuthUser } from '@shared-types/user';
 
-export type SignTokenHandler = (user: AuthUser) => Promise<string>;
+type SignTokenPayload = {
+  username: string;
+  id: string;
+};
 
-export type DecodedUserToken = AuthUser & {
+export type SignTokenHandler = (user: SignTokenPayload) => Promise<string>;
+
+export type DecodedUserToken = SignTokenPayload & {
   iat: number;
   exp: number;
 };
