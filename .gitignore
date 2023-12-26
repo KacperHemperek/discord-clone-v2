@@ -44,4 +44,4 @@ Thumbs.db
 
 .env
 
-/apps/fastify-api/src/prisma/dev.db
+apps/fastify-api/src/prisma/dev.db

@@ -8,11 +8,10 @@ generator client {
 }
 
 model User {
-  id       String @id @default(uuid())
+  id       String  @id @default(uuid())
   username String
   password String
-
-  active Boolean @default(false)
+  active   Boolean @default(false)
 
   invited   Friendship[] @relation("invited")
   invitedBy Friendship[] @relation("invitedBy")

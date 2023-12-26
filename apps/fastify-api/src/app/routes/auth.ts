@@ -79,6 +79,7 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
         id,
         username,
         password,
+        active: true,
       };
 
       await fastify.db.user.create({ data: newUser });
