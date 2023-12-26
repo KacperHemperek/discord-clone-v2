@@ -17,7 +17,6 @@ export type RequestUser = {
 
 declare module 'fastify' {
   interface FastifyInstance {
-    user: RequestUser | null;
     userRequired: (request: FastifyRequest) => void;
     cookieConfig: CookiesConfig;
     signAccessToken: SignTokenHandler;
@@ -35,5 +34,6 @@ declare module 'fastify' {
 
   interface FastifyRequest {
     getTokensFromCookies: GetTokensFromCookiesHandler;
+    user: RequestUser;
   }
 }

@@ -22,7 +22,7 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
       },
     },
     handler: async (request, reply) => {
-      const { username, password, confirmPassword } = request.body;
+      const { username, password, confirmPassword, email } = request.body;
 
       const user = await fastify.db.user.findFirst({ where: { username } });
 
@@ -60,6 +60,7 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
         id,
         username,
         password,
+        email,
         active: true,
       };
 
@@ -67,8 +68,14 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
 
       fastify.log.info(`[ routes ] User ${username} created.`);
 
-      const accessToken = await fastify.signAccessToken({ username, id });
-      const refreshToken = await fastify.signRefreshToken({ username, id });
+      const userObj = {
+        id,
+        username,
+        email,
+      };
+
+      const accessToken = await fastify.signAccessToken(userObj);
+      const refreshToken = await fastify.signRefreshToken(userObj);
 
       reply.addAccessTokenToCookies(accessToken);
       reply.addRefreshTokenToCookies(refreshToken);
@@ -92,8 +99,8 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
       },
     },
     handler: async (request, reply) => {
-      const { username, password } = request.body;
-      const user = await fastify.db.user.findFirst({ where: { username } });
+      const { email, password } = request.body;
+      const user = await fastify.db.user.findUnique({ where: { email } });
 
       if (!user || user.password !== password) {
         return await reply
@@ -104,6 +111,7 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
       const userObj = {
         id: user.id,
         username: user.username,
+        email: user.email,
       };
 
       const accessToken = await fastify.signAccessToken(userObj);

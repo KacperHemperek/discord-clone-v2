@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Input from '../../components/Input';
 
 const LoginFormSchema = z.object({
-  username: z.string().min(1, 'Username is required'),
+  email: z.string().min(1, 'Username is required'),
   password: z.string().min(1, 'Password is required'),
 });
 
@@ -16,7 +16,7 @@ export default function LoginPage() {
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(LoginFormSchema),
     defaultValues: {
-      username: '',
+      email: '',
       password: '',
     },
   });
@@ -25,7 +25,7 @@ export default function LoginPage() {
     onError: (error) => {
       console.log(error);
       form.reset();
-      form.setError('username', {
+      form.setError('email', {
         message: 'Invalid username or password',
       });
       form.setError('password', {
@@ -53,12 +53,12 @@ export default function LoginPage() {
         <div className='pb-6'>
           <Controller
             control={form.control}
-            name='username'
+            name='email'
             render={({ field, formState: { errors } }) => (
               <Input
-                label='username'
+                label='email'
                 type='text'
-                error={errors.username?.message}
+                error={errors.email?.message}
                 {...field}
               />
             )}

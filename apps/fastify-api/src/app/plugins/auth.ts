@@ -4,6 +4,7 @@ import auth from '@fastify/auth';
 import { StatusCodes } from 'http-status-codes';
 
 type SignTokenPayload = {
+  email: string;
   username: string;
   id: string;
 };

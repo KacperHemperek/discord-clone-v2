@@ -9,6 +9,7 @@ generator client {
 
 model User {
   id       String  @id @default(uuid())
+  email    String  @unique
   username String
   password String
   active   Boolean @default(false)
@@ -24,10 +25,10 @@ model Friendship {
   requestedAt DateTime  @default(now())
   acceptedAt  DateTime?
 
-  inviter  User   @relation("invitedBy", fields: [userId], references: [id])
-  userId   String
-  invitee  User   @relation("invited", fields: [friendId], references: [id])
-  friendId String
+  inviter   User   @relation("invitedBy", fields: [inviterId], references: [id])
+  inviterId String
+  invitee   User   @relation("invited", fields: [inviteeId], references: [id])
+  inviteeId String @map("friendId")
 
-  @@unique([userId, friendId])
+  @@unique([inviterId, inviteeId])
 }

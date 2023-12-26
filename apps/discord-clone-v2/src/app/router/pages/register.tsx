@@ -1,4 +1,3 @@
-import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
@@ -8,6 +7,7 @@ import Input from '../../components/Input';
 
 const registerFormSchema = z
   .object({
+    email: z.string().email(),
     username: z.string().min(3).max(32),
     password: z
       .string()
@@ -50,6 +50,21 @@ export default function RegisterPage() {
         <h1 className='text-2xl font-semibold text-center pb-2'>
           Create an account
         </h1>
+        <div className='flex flex-col pb-6'>
+          <Controller
+            control={form.control}
+            name='email'
+            render={({ field, formState: { errors } }) => (
+              <Input
+                {...field}
+                error={errors.email?.message}
+                type='text'
+                id='email'
+                label='email'
+              />
+            )}
+          />
+        </div>
         <div className='flex flex-col pb-6'>
           <Controller
             control={form.control}

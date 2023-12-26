@@ -6,6 +6,7 @@ const UserResponseSchema = Type.Object({
 });
 
 export const RegisterUserBody = Type.Object({
+  email: Type.String(),
   username: Type.String(),
   password: Type.String(),
   confirmPassword: Type.String(),
@@ -17,7 +18,7 @@ export const RegisterUserCreatedResponse = Type.Object({
 });
 
 export const LoginUserBody = Type.Object({
-  username: Type.String(),
+  email: Type.String(),
   password: Type.String(),
 });
 
