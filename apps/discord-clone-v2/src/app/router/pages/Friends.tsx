@@ -47,7 +47,6 @@ export default function FriendsPage() {
 
       if (jsonData?.type === ALL_FRIEND_INVITES_TYPE) {
         const parsedData = allFriendsRequestSchema.safeParse(jsonData);
-        console.log(parsedData);
 
         if (parsedData.success) {
           setNotifications(parsedData.data.payload);
@@ -56,7 +55,6 @@ export default function FriendsPage() {
 
       if (jsonData?.type === NEW_FRIEND_INVITE_TYPE) {
         const parsedData = newFriendRequestSchema.safeParse(jsonData);
-        console.log(parsedData);
 
         if (parsedData.success) {
           setNotifications((notifications) => [
@@ -71,9 +69,9 @@ export default function FriendsPage() {
       console.log('closed');
     };
 
-    // return () => {
-    //   friendInviteWs.current?.close();
-    // };
+    return () => {
+      friendInviteWs.current?.close();
+    };
   }, []);
 
   return (
