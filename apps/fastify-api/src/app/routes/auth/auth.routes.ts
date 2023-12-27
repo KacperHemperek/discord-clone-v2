@@ -1,4 +1,3 @@
-import { User } from '@prisma/client';
 import { FastifyPluginCallback } from 'fastify';
 import { StatusCodes } from 'http-status-codes';
 import {
@@ -24,7 +23,7 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
     handler: async (request, reply) => {
       const { username, password, confirmPassword, email } = request.body;
 
-      const user = await fastify.db.user.findFirst({ where: { username } });
+      const user = await fastify.db.user.findUnique({ where: { email } });
 
       fastify.log.info(
         `[ routes ] User ${username} trying to create account. \n ${user}`
@@ -56,15 +55,14 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
 
       const id = crypto.randomUUID();
 
-      const newUser: User = {
-        id,
-        username,
-        password,
-        email,
-        active: true,
-      };
-
-      await fastify.db.user.create({ data: newUser });
+      await fastify.db.user.create({
+        data: {
+          id,
+          username,
+          password,
+          email,
+        },
+      });
 
       fastify.log.info(`[ routes ] User ${username} created.`);
 

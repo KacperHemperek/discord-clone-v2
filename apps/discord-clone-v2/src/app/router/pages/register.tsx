@@ -31,6 +31,7 @@ export default function RegisterPage() {
   });
   const { mutate: register } = useRegister({
     onError: (error) => {
+      form.setError('email', { message: error.message });
       form.setError('username', { message: error.message });
       form.setError('password', { message: error.message });
       form.setError('confirmPassword', { message: error.message });
