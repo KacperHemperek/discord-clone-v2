@@ -121,8 +121,6 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
         },
       });
 
-      fastify.log.info(invites);
-
       const modifiedInvites: InviterUser[] = invites.map((invite) => {
         return {
           inviterId: invite.inviter.id,
