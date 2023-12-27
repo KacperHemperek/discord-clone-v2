@@ -4,6 +4,8 @@ import RegisterPage from './pages/Register';
 import BaseLayout from './layouts/BaseLayout';
 import AuthGuard from './layouts/AuthGuard';
 import FriendsPage from './pages/Friends';
+import FriendsLayout from './layouts/FriendsLayout';
+import FriendRequests from './pages/FriendRequests';
 
 export const router = createBrowserRouter([
   {
@@ -11,21 +13,39 @@ export const router = createBrowserRouter([
     element: <AuthGuard />,
     children: [
       {
-        path: '/home',
+        path: 'home',
         element: <BaseLayout />,
         children: [
           {
-            path: '/home/friends',
-            element: <FriendsPage />,
+            path: 'friends',
+            element: <FriendsLayout />,
+            children: [
+              {
+                path: '',
+                element: <FriendsPage />,
+              },
+              {
+                path: 'requests',
+                element: <FriendRequests />,
+              },
+              {
+                path: 'all',
+                element: <div>all</div>,
+              },
+              {
+                path: 'invite',
+                element: <div>invite</div>,
+              },
+            ],
           },
         ],
       },
       {
-        path: '/login',
+        path: 'login',
         element: <LoginPage />,
       },
       {
-        path: '/register',
+        path: 'register',
         element: <RegisterPage />,
       },
     ],

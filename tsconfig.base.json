@@ -15,9 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@api/*": ["apps/fastify-api/src/*"],
       "@shared-types/*": ["types/*"],
-      "@web/*": ["apps/discord-clone-v2/src/*"],
       "@configs/*": ["configs/*"]
     }
   },
