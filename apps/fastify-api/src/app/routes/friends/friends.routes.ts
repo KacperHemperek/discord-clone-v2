@@ -9,6 +9,7 @@ type InviterUser = {
   inviterId: string;
   inviterUsername: string;
   inviterEmail: string;
+  seen: boolean;
 };
 
 export const friendsRoutes = async (fastify: FastifyInstance) => {
@@ -53,11 +54,21 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
         });
       }
 
-      await fastify.db.friendship.create({
+      const friendRequest = await fastify.db.friendship.create({
         data: {
           accepted: false,
           inviterId: req.user.id,
           inviteeId: user.id,
+        },
+        select: {
+          inviter: {
+            select: {
+              id: true,
+              username: true,
+              email: true,
+            },
+          },
+          seen: true,
         },
       });
 
@@ -70,9 +81,10 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
         );
 
         const inviterUser: InviterUser = {
-          inviterId: req.user.id,
-          inviterUsername: req.user.username,
-          inviterEmail: req.user.email,
+          inviterId: friendRequest.inviter.id,
+          inviterUsername: friendRequest.inviter.username,
+          inviterEmail: friendRequest.inviter.email,
+          seen: friendRequest.seen,
         };
         conn.socket.send(
           JSON.stringify({
@@ -118,6 +130,7 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
               email: true,
             },
           },
+          seen: true,
         },
       });
 
@@ -126,6 +139,7 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
           inviterId: invite.inviter.id,
           inviterUsername: invite.inviter.username,
           inviterEmail: invite.inviter.email,
+          seen: invite.seen,
         };
       });
 

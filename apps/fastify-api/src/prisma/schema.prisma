@@ -22,6 +22,7 @@ model Friendship {
   id String @id @default(uuid())
 
   accepted    Boolean   @default(false)
+  seen        Boolean   @default(false)
   requestedAt DateTime  @default(now())
   acceptedAt  DateTime?
 
