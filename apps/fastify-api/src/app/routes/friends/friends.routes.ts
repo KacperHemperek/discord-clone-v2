@@ -2,11 +2,8 @@ import { FastifyInstance } from 'fastify';
 import { StatusCodes } from 'http-status-codes';
 import { SocketStream } from '@fastify/websocket';
 import { SendFriendRequestBodyType } from '@shared-types/friends';
-// import {
-//   ALL_FRIEND_INVITES_TYPE,
-//   NEW_FRIEND_INVITE_TYPE,
-// } from '@configs/friends';
 import { SendFriendRequestBody } from './friends.schema';
+import { ErrorBaseResponse } from '../../utils/error-response';
 
 type InviterUser = {
   inviterId: string;
@@ -15,7 +12,7 @@ type InviterUser = {
 };
 
 export const friendsRoutes = async (fastify: FastifyInstance) => {
-  const connetions = new Map<string, SocketStream>();
+  const connections = new Map<string, SocketStream>();
 
   fastify.get('/', {
     preHandler: fastify.auth([fastify.userRequired]),
@@ -26,13 +23,23 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
     },
   });
 
-  fastify.post<{ Body: SendFriendRequestBodyType }>('/', {
+  fastify.post<{ Body: SendFriendRequestBodyType }>('/invites', {
     schema: {
       body: SendFriendRequestBody,
+      response: {
+        [StatusCodes.BAD_REQUEST]: ErrorBaseResponse,
+        [StatusCodes.NOT_FOUND]: ErrorBaseResponse,
+      },
     },
     preHandler: fastify.auth([fastify.userRequired]),
     handler: async (req, rep) => {
       const { email } = req.body;
+
+      if (req.user.email === email) {
+        return await rep.status(StatusCodes.BAD_REQUEST).send({
+          message: `You can't send friend invite to yourself`,
+        });
+      }
 
       const user = await fastify.db.user.findFirst({
         where: {
@@ -54,10 +61,14 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
         },
       });
 
-      const conn = connetions.get(user.id);
+      const conn = connections.get(user.id);
 
       // send notification to the user when he receives a friend invite
       if (conn) {
+        fastify.log.info(
+          `[ router/friends/invites ] Sending notification to the user ${user.username}`
+        );
+
         const inviterUser: InviterUser = {
           inviterId: req.user.id,
           inviterUsername: req.user.username,
@@ -65,7 +76,6 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
         };
         conn.socket.send(
           JSON.stringify({
-            // type: NEW_FRIEND_INVITE_TYPE,
             type: 'NEW_FRIEND_INVITE',
             payload: inviterUser,
           })
@@ -85,7 +95,15 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
       preHandler: fastify.auth([fastify.userRequired]),
     },
     async (conn, req) => {
-      connetions.set(req.user.id, conn);
+      const existingConn = connections.get(req.user.id);
+
+      if (existingConn) {
+        fastify.log.info('Closing existing connection');
+        existingConn.socket.close();
+        connections.delete(req.user.id);
+      }
+
+      connections.set(req.user.id, conn);
 
       const invites = await fastify.db.friendship.findMany({
         where: {
@@ -93,9 +111,17 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
           accepted: false,
         },
         select: {
-          inviter: true,
+          inviter: {
+            select: {
+              id: true,
+              username: true,
+              email: true,
+            },
+          },
         },
       });
+
+      fastify.log.info(invites);
 
       const modifiedInvites: InviterUser[] = invites.map((invite) => {
         return {
@@ -107,7 +133,6 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
 
       conn.socket.send(
         JSON.stringify({
-          // type: ALL_FRIEND_INVITES_TYPE,
           type: 'ALL_FRIEND_INVITES',
           payload: modifiedInvites,
         })

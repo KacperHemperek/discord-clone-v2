@@ -31,4 +31,19 @@ services:
     env_file:
       - .env
 
+  studio:
+    container_name: discord-studio
+    image: discord-studio-image
+    build:
+      dockerfile: ./docker/Dockerfile.studio.dev
+      context: .
+    ports:
+      - 5555:5555
+    volumes:
+      - ./apps/fastify-api:/app/apps/fastify-api
+      - ./types:/app/types
+      - ./configs:/app/configs
+    env_file:
+      - .env
+
 

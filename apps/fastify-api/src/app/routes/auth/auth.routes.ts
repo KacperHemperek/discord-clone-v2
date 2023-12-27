@@ -21,18 +21,16 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
       },
     },
     handler: async (request, reply) => {
+      fastify.log.info(`[ routes/auth/register ] Registering user...`);
       const { username, password, confirmPassword, email } = request.body;
 
       const user = await fastify.db.user.findUnique({ where: { email } });
 
-      fastify.log.info(
-        `[ routes ] User ${username} trying to create account. \n ${user}`
-      );
-
       if (user) {
+        fastify.log.info(`[ routes/auth/register ] User already exists.`);
         reply
           .status(StatusCodes.UNAUTHORIZED)
-          .send({ message: 'User with that username already exists' });
+          .send({ message: 'User with that email already exists' });
         return await reply;
       }
 
@@ -41,6 +39,9 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
       );
 
       if (!passwordRegex.test(password)) {
+        fastify.log.info(
+          `[ routes/auth/register ] Password does not match restrictions.`
+        );
         return await reply.status(StatusCodes.UNAUTHORIZED).send({
           message:
             'Password must be at least 8 characters long, contain at least 1 uppercase letter, 1 lowercase letter, and 1 number',
@@ -48,28 +49,24 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
       }
 
       if (password !== confirmPassword) {
+        fastify.log.info(`[ routes/auth/register ] Passwords do not match.`);
         return await reply.status(StatusCodes.UNAUTHORIZED).send({
           message: 'Passwords do not match',
         });
       }
 
-      const id = crypto.randomUUID();
-
-      await fastify.db.user.create({
+      const createdUser = await fastify.db.user.create({
         data: {
-          id,
           username,
           password,
           email,
         },
       });
 
-      fastify.log.info(`[ routes ] User ${username} created.`);
-
       const userObj = {
-        id,
-        username,
-        email,
+        id: createdUser.id,
+        username: createdUser.username,
+        email: createdUser.email,
       };
 
       const accessToken = await fastify.signAccessToken(userObj);
@@ -78,11 +75,16 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
       reply.addAccessTokenToCookies(accessToken);
       reply.addRefreshTokenToCookies(refreshToken);
 
+      fastify.log.info(
+        `[ routes/auth/register ] User registered successfully.`
+      );
+
       reply.code(StatusCodes.CREATED).send({
         message: 'User successfully registered',
         user: {
-          id,
-          username,
+          id: createdUser.id,
+          username: createdUser.username,
+          email: createdUser.email,
         },
       });
     },
@@ -120,7 +122,7 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
 
       reply.status(StatusCodes.OK).send({
         message: 'User successfully logged in',
-        user: { id: user.id, username: user.username },
+        user: { id: user.id, username: user.username, email: user.email },
       });
     },
   });
@@ -143,7 +145,6 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
     schema: {
       response: {
         [StatusCodes.OK]: GetLoggedInUserResponse,
-        [StatusCodes.UNAUTHORIZED]: ErrorBaseResponse,
       },
     },
     preHandler: fastify.auth([fastify.userRequired]),

@@ -3,6 +3,7 @@ import { Type } from '@sinclair/typebox';
 const UserResponseSchema = Type.Object({
   id: Type.String(),
   username: Type.String(),
+  email: Type.String(),
 });
 
 export const RegisterUserBody = Type.Object({
