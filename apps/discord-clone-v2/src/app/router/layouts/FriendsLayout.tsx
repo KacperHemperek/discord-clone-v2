@@ -5,10 +5,9 @@ import { FriendsNavLink } from '../../components/FriendsNavLink';
 import { User } from 'lucide-react';
 
 export default function FriendsLayout() {
-  const { notifications } = useFriendRequests();
+  const { requests } = useFriendRequests();
 
-  const hasNotSeenNotifications =
-    notifications.filter((n) => !n.seen).length > 0;
+  const hasNotSeenNotifications = requests.filter((n) => !n.seen).length > 0;
 
   return (
     <div className='flex-grow flex flex-col'>

@@ -26,7 +26,7 @@ const newFriendRequestSchema = z.object({
 type FriendInvite = z.infer<typeof inviteItemSchema>;
 
 function useFriendRequestsValue() {
-  const [notifications, setNotifications] = React.useState<FriendInvite[]>([]);
+  const [requests, setRequests] = React.useState<FriendInvite[]>([]);
 
   const friendInviteWs = React.useRef<WebSocket | null>(null);
 
@@ -47,7 +47,7 @@ function useFriendRequestsValue() {
         const parsedData = allFriendsRequestSchema.safeParse(jsonData);
 
         if (parsedData.success) {
-          setNotifications(parsedData.data.payload);
+          setRequests(parsedData.data.payload);
         }
       }
 
@@ -55,7 +55,7 @@ function useFriendRequestsValue() {
         const parsedData = newFriendRequestSchema.safeParse(jsonData);
 
         if (parsedData.success) {
-          setNotifications((notifications) => [
+          setRequests((notifications) => [
             ...notifications,
             parsedData.data.payload,
           ]);
@@ -73,7 +73,7 @@ function useFriendRequestsValue() {
   }, []);
 
   return {
-    notifications,
+    requests: requests,
   };
 }
 
