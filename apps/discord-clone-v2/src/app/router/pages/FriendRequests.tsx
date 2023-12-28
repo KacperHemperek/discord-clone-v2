@@ -46,6 +46,7 @@ export default function FriendRequests() {
           <FriendRequestItem
             userId={request.inviterId}
             username={request.inviterUsername}
+            key={request.inviterId}
           />
         ))}
       </Container>

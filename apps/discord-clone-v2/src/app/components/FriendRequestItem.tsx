@@ -11,7 +11,7 @@ export default function FriendRequestItem({
   userId: string;
 }) {
   return (
-    <button className='relative flex w-full group'>
+    <div className='relative flex w-full group'>
       {/* Top Border */}
       <div className='top-0 left-0 right-0 absolute h-[1px] bg-dc-neutral-700' />
       <div className='flex justify-between items-center flex-grow py-3 px-2 -mx-2 rounded-md group-hover:bg-dc-neutral-700 transition-colors duration-100'>
@@ -29,6 +29,6 @@ export default function FriendRequestItem({
           </button>
         </div>
       </div>
-    </button>
+    </div>
   );
 }
