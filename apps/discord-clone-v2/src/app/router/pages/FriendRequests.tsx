@@ -1,8 +1,10 @@
 import React from 'react';
-import { useFriendRequests } from '../../context/FriendRequestsProvider';
-import FriendRequestItem from '../../components/FriendRequestItem';
-import { cn } from '../../utils/cn';
 import { Search } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import FriendRequestItem from '../../components/FriendRequestItem';
+import { useFriendRequests } from '../../context/FriendRequestsProvider';
+import { cn } from '../../utils/cn';
+import { api } from '../../utils/api';
 
 function Container({
   children,
@@ -15,11 +17,36 @@ function Container({
 }
 
 export default function FriendRequests() {
-  const { requests } = useFriendRequests();
+  const { requests, markAllAsSeen, hasNewRequests } = useFriendRequests();
+
+  useQuery({
+    retry: false,
+    queryKey: ['seen-all'],
+    queryFn: async () => {
+      if (!hasNewRequests)
+        return {
+          message: 'No new requests',
+        };
+
+      const res = await api('/friends/invites/seen', {
+        method: 'PUT',
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.error(data?.message);
+        throw new Error(data?.message);
+      }
+      markAllAsSeen();
+      return data;
+    },
+  });
 
   const [search, setSearch] = React.useState('');
+
   const filteredRequests = requests.filter((request) =>
-    request.inviterUsername.toLowerCase().includes(search.toLowerCase())
+    request.username.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -44,9 +71,9 @@ export default function FriendRequests() {
       <Container className='pb-4 overflow-auto'>
         {filteredRequests.map((request) => (
           <FriendRequestItem
-            userId={request.inviterId}
-            username={request.inviterUsername}
-            key={request.inviterId}
+            userId={request.id}
+            username={request.username}
+            key={request.id}
           />
         ))}
       </Container>

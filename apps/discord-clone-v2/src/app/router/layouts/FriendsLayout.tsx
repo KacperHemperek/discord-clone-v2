@@ -5,9 +5,7 @@ import { FriendsNavLink } from '../../components/FriendsNavLink';
 import { User } from 'lucide-react';
 
 export default function FriendsLayout() {
-  const { requests } = useFriendRequests();
-
-  const hasNotSeenNotifications = requests.filter((n) => !n.seen).length > 0;
+  const { hasNewRequests } = useFriendRequests();
 
   return (
     <div className='flex-grow flex flex-col'>
@@ -25,7 +23,7 @@ export default function FriendsLayout() {
           <FriendsNavLink
             to='/home/friends/requests'
             label='Requests'
-            showBadge={hasNotSeenNotifications}
+            showBadge={hasNewRequests}
           />
           <FriendsNavLink
             to='/home/friends/invite'

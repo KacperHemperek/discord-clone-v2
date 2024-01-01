@@ -7,9 +7,9 @@ import { getWebsocketConnection } from '../utils/websocket';
 import { z } from 'zod';
 
 const inviteItemSchema = z.object({
-  inviterId: z.string(),
-  inviterUsername: z.string(),
-  inviterEmail: z.string(),
+  id: z.string(),
+  username: z.string(),
+  email: z.string(),
   seen: z.boolean(),
 });
 
@@ -72,8 +72,21 @@ function useFriendRequestsValue() {
     };
   }, []);
 
+  function markAllAsSeen() {
+    setRequests((requests) => {
+      return requests.map((request) => ({
+        ...request,
+        seen: true,
+      }));
+    });
+  }
+
+  const hasNewRequests = requests.filter((n) => !n.seen).length > 0;
+
   return {
     requests: requests,
+    markAllAsSeen,
+    hasNewRequests,
   };
 }
 

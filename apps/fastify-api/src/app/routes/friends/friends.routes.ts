@@ -6,11 +6,18 @@ import { SendFriendRequestBody } from './friends.schema';
 import { ErrorBaseResponse } from '../../utils/error-response';
 
 type InviterUser = {
-  inviterId: string;
-  inviterUsername: string;
-  inviterEmail: string;
+  id: string;
+  username: string;
+  email: string;
   seen: boolean;
 };
+
+export enum FriendRequestType {
+  newFriendInvite = 'NEW_FRIEND_INVITE',
+  allFriendInvites = 'ALL_FRIEND_INVITES',
+  friendInviteAccepted = 'FRIEND_INVITE_ACCEPTED',
+  friendInviteDeclined = 'FRIEND_INVITE_DECLINED',
+}
 
 export enum FriendRequestStatus {
   pending = 'pending',
@@ -20,6 +27,31 @@ export enum FriendRequestStatus {
 
 export const friendsRoutes = async (fastify: FastifyInstance) => {
   const connections = new Map<string, SocketStream>();
+
+  function sendFriendRequestsUpdateToUser<T extends object>({
+    type,
+    userId,
+    payload,
+  }: {
+    userId: string;
+    type: FriendRequestType;
+    payload: T;
+  }) {
+    const conn = connections.get(userId);
+
+    if (conn) {
+      fastify.log.info(
+        `[ router/friends/invites ] Sending notification to the user ${userId}`
+      );
+
+      conn.socket.send(
+        JSON.stringify({
+          type,
+          payload,
+        })
+      );
+    }
+  }
 
   fastify.get('/', {
     preHandler: fastify.auth([fastify.userRequired]),
@@ -77,27 +109,18 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
         },
       });
 
-      const conn = connections.get(user.id);
-
-      // send notification to the user when he receives a friend invite
-      if (conn) {
-        fastify.log.info(
-          `[ router/friends/invites ] Sending notification to the user ${user.username}`
-        );
-
         const inviterUser: InviterUser = {
-          inviterId: friendRequest.inviter.id,
-          inviterUsername: friendRequest.inviter.username,
-          inviterEmail: friendRequest.inviter.email,
+        id: friendRequest.inviter.id,
+        username: friendRequest.inviter.username,
+        email: friendRequest.inviter.email,
           seen: friendRequest.seen,
         };
-        conn.socket.send(
-          JSON.stringify({
-            type: 'NEW_FRIEND_INVITE',
+
+      sendFriendRequestsUpdateToUser({
+        userId: user.id,
+        type: FriendRequestType.newFriendInvite,
             payload: inviterUser,
-          })
-        );
-      }
+      });
 
       return rep
         .status(StatusCodes.OK)
@@ -141,9 +164,9 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
 
       const modifiedInvites: InviterUser[] = invites.map((invite) => {
         return {
-          inviterId: invite.inviter.id,
-          inviterUsername: invite.inviter.username,
-          inviterEmail: invite.inviter.email,
+          id: invite.inviter.id,
+          username: invite.inviter.username,
+          email: invite.inviter.email,
           seen: invite.seen,
         };
       });
@@ -156,6 +179,29 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
       );
     }
   );
+
+  fastify.put<{ Params: { inviteId: string } }>('/invites/seen', {
+    preHandler: fastify.auth([fastify.userRequired]),
+    handler: async (req, rep) => {
+      await fastify.db.friendship.updateMany({
+        where: {
+          inviteeId: req.user.id,
+          seen: false,
+        },
+        data: {
+          seen: true,
+        },
+      });
+
+      fastify.log.info(
+        `[ router/friends/invites ] Friend invites marked as seen for user ${req.user.username}`
+      );
+
+      rep.send({
+        message: `Friend invites for user ${req.user.username} marked as seen`,
+      });
+    },
+  });
 
   fastify.log.info(`[ routes ] Friends routes loaded.`);
 };
