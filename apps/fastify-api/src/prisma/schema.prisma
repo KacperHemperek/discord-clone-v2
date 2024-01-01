@@ -21,7 +21,7 @@ model User {
 model Friendship {
   id String @id @default(uuid())
 
-  accepted    Boolean   @default(false)
+  status      String    @default("pending")
   seen        Boolean   @default(false)
   requestedAt DateTime  @default(now())
   acceptedAt  DateTime?

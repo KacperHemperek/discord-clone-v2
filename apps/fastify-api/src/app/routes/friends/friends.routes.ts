@@ -12,6 +12,12 @@ type InviterUser = {
   seen: boolean;
 };
 
+export enum FriendRequestStatus {
+  pending = 'pending',
+  accepted = 'accepted',
+  declined = 'declined',
+}
+
 export const friendsRoutes = async (fastify: FastifyInstance) => {
   const connections = new Map<string, SocketStream>();
 
@@ -56,7 +62,6 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
 
       const friendRequest = await fastify.db.friendship.create({
         data: {
-          accepted: false,
           inviterId: req.user.id,
           inviteeId: user.id,
         },
@@ -120,7 +125,7 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
       const invites = await fastify.db.friendship.findMany({
         where: {
           inviteeId: req.user.id,
-          accepted: false,
+          status: FriendRequestStatus.pending,
         },
         select: {
           inviter: {

@@ -16,7 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "@shared-types/*": ["types/*"],
-      "@configs/*": ["configs/*"]
+      "@configs/*": ["configs/*"],
+      "@api/*": ["apps/fastify-api/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]
