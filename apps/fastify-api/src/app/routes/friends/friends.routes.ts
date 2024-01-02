@@ -92,12 +92,34 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
         });
       }
 
+      const existingFriendship = await fastify.db.friendship.findFirst({
+        where: {
+          OR: [
+            {
+              inviterId: req.user.id,
+              inviteeId: user.id,
+            },
+            {
+              inviterId: user.id,
+              inviteeId: req.user.id,
+            },
+          ],
+        },
+      });
+
+      if (existingFriendship) {
+        return await rep.status(StatusCodes.BAD_REQUEST).send({
+          message: `You are already friends with user ${user.username}`,
+        });
+      }
+
       const friendRequest = await fastify.db.friendship.create({
         data: {
           inviterId: req.user.id,
           inviteeId: user.id,
         },
         select: {
+          id: true,
           inviter: {
             select: {
               id: true,
@@ -110,7 +132,7 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
       });
 
         const inviterUser: InviterUser = {
-        id: friendRequest.inviter.id,
+        id: friendRequest.id,
         username: friendRequest.inviter.username,
         email: friendRequest.inviter.email,
           seen: friendRequest.seen,
@@ -151,6 +173,7 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
           status: FriendRequestStatus.pending,
         },
         select: {
+          id: true,
           inviter: {
             select: {
               id: true,
@@ -164,7 +187,7 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
 
       const modifiedInvites: InviterUser[] = invites.map((invite) => {
         return {
-          id: invite.inviter.id,
+          id: invite.id,
           username: invite.inviter.username,
           email: invite.inviter.email,
           seen: invite.seen,
@@ -199,6 +222,108 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
 
       rep.send({
         message: `Friend invites for user ${req.user.username} marked as seen`,
+      });
+    },
+  });
+
+  fastify.put<{ Params: { inviteId: string } }>('/invites/:inviteId/accept', {
+    preHandler: fastify.auth([fastify.userRequired]),
+    handler: async (req, rep) => {
+      const { inviteId } = req.params;
+
+      const invite = await fastify.db.friendship.findFirst({
+        where: {
+          id: inviteId,
+          inviteeId: req.user.id,
+          status: FriendRequestStatus.pending,
+        },
+        select: {
+          id: true,
+          inviter: {
+            select: {
+              username: true,
+            },
+          },
+        },
+      });
+
+      if (!invite) {
+        return await rep.status(StatusCodes.NOT_FOUND).send({
+          message: `Friend invite not found`,
+        });
+      }
+
+      await fastify.db.friendship.update({
+        where: {
+          id: inviteId,
+        },
+        data: {
+          status: FriendRequestStatus.accepted,
+        },
+        select: {
+          inviter: {
+            select: {
+              id: true,
+              username: true,
+              email: true,
+            },
+          },
+          seen: true,
+        },
+      });
+
+      fastify.log.info(
+        `[ router/friends/invites ] Friend request accepted from user ${invite.inviter.username}`
+      );
+
+      rep.send({
+        message: `Friend invite from user ${invite.inviter.username} accepted`,
+      });
+    },
+  });
+
+  fastify.put<{ Params: { inviteId: string } }>('/invites/:inviteId/decline', {
+    preHandler: fastify.auth([fastify.userRequired]),
+    handler: async (req, rep) => {
+      const { inviteId } = req.params;
+
+      const invite = await fastify.db.friendship.findFirst({
+        where: {
+          id: inviteId,
+          inviteeId: req.user.id,
+          status: FriendRequestStatus.pending,
+        },
+        select: {
+          id: true,
+          inviter: {
+            select: {
+              username: true,
+            },
+          },
+        },
+      });
+
+      if (!invite) {
+        return await rep.status(StatusCodes.NOT_FOUND).send({
+          message: `Friend invite not found`,
+        });
+      }
+
+      await fastify.db.friendship.update({
+        where: {
+          id: inviteId,
+        },
+        data: {
+          status: FriendRequestStatus.declined,
+        },
+      });
+
+      fastify.log.info(
+        `[ router/friends/invites ] Friend request declined from user ${invite.inviter.username}`
+      );
+
+      rep.send({
+        message: `Friend invite from user ${invite.inviter.username} declined`,
       });
     },
   });

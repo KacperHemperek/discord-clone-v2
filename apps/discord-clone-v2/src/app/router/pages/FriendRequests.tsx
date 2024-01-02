@@ -20,14 +20,9 @@ export default function FriendRequests() {
   const { requests, markAllAsSeen, hasNewRequests } = useFriendRequests();
 
   useQuery({
-    retry: false,
+    enabled: hasNewRequests,
     queryKey: ['seen-all'],
     queryFn: async () => {
-      if (!hasNewRequests)
-        return {
-          message: 'No new requests',
-        };
-
       const res = await api('/friends/invites/seen', {
         method: 'PUT',
       });
@@ -71,6 +66,7 @@ export default function FriendRequests() {
       <Container className='pb-4 overflow-auto'>
         {filteredRequests.map((request) => (
           <FriendRequestItem
+            id={request.id}
             userId={request.id}
             username={request.username}
             key={request.id}
