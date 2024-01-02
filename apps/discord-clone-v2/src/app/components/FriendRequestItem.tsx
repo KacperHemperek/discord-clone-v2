@@ -12,8 +12,8 @@ export default function FriendRequestItem({
 }: {
   id: string;
   username: string;
-  avatar?: string;
   userId: string;
+  avatar?: string;
 }) {
   const { removeRequest } = useFriendRequests();
 
