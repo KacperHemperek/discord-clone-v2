@@ -5,7 +5,8 @@ import BaseLayout from './layouts/BaseLayout';
 import AuthGuard from './layouts/AuthGuard';
 import FriendsPage from './pages/Friends';
 import FriendsLayout from './layouts/FriendsLayout';
-import FriendRequests from './pages/FriendRequests';
+import FriendRequestsPage from './pages/FriendRequests';
+import AllFriendsPage from './pages/AllFriends';
 
 export const router = createBrowserRouter([
   {
@@ -26,11 +27,11 @@ export const router = createBrowserRouter([
               },
               {
                 path: 'requests',
-                element: <FriendRequests />,
+                element: <FriendRequestsPage />,
               },
               {
                 path: 'all',
-                element: <div>all</div>,
+                element: <AllFriendsPage />,
               },
               {
                 path: 'invite',

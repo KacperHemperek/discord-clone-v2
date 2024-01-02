@@ -3,20 +3,10 @@ import { Search } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import FriendRequestItem from '../../components/FriendRequestItem';
 import { useFriendRequests } from '../../context/FriendRequestsProvider';
-import { cn } from '../../utils/cn';
 import { api } from '../../utils/api';
+import { Container } from '../../components/FriendPageContainer';
 
-function Container({
-  children,
-  className,
-}: {
-  children?: React.ReactNode;
-  className?: string;
-}) {
-  return <div className={cn('px-10', className)}>{children}</div>;
-}
-
-export default function FriendRequests() {
+export default function FriendRequestsPage() {
   const { requests, markAllAsSeen, hasNewRequests } = useFriendRequests();
 
   useQuery({

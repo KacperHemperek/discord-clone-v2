@@ -1,11 +1,14 @@
 import { FastifyInstance } from 'fastify';
 import { StatusCodes } from 'http-status-codes';
 import { SocketStream } from '@fastify/websocket';
-import { SendFriendRequestBodyType } from '@shared-types/friends';
-import { SendFriendRequestBody } from './friends.schema';
+import { FriendType, SendFriendRequestBodyType } from '@shared-types/friends';
+import {
+  GetAllFriendsResponseBody,
+  SendFriendRequestBody,
+} from './friends.schema';
 import { ErrorBaseResponse } from '../../utils/error-response';
 
-type InviterUser = {
+type FriendRequest = {
   id: string;
   username: string;
   email: string;
@@ -54,11 +57,69 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
   }
 
   fastify.get('/', {
+    schema: {
+      response: {
+        [StatusCodes.OK]: GetAllFriendsResponseBody,
+      },
+    },
     preHandler: fastify.auth([fastify.userRequired]),
     handler: async (req, rep) => {
-      // TODO implement friends list
+      const friends = await fastify.db.friendship.findMany({
+        where: {
+          OR: [
+            {
+              inviteeId: req.user.id,
+              status: FriendRequestStatus.accepted,
+            },
+            {
+              inviterId: req.user.id,
+              status: FriendRequestStatus.accepted,
+            },
+          ],
+        },
+        select: {
+          inviter: {
+            select: {
+              id: true,
+              username: true,
+              email: true,
+              active: true,
+            },
+          },
+          invitee: {
+            select: {
+              id: true,
+              username: true,
+              email: true,
+              active: true,
+            },
+          },
+        },
+      });
 
-      return rep.status(StatusCodes.OK).send({ hello: 'friends' });
+      const friendList: FriendType[] = friends.map((friend) => {
+        let result: FriendType;
+
+        if (friend.inviter.id === req.user.id) {
+          result = {
+            id: friend.invitee.id,
+            email: friend.invitee.email,
+            username: friend.invitee.username,
+            active: friend.invitee.active,
+          };
+        } else {
+          result = {
+            id: friend.inviter.id,
+            username: friend.inviter.username,
+            email: friend.inviter.email,
+            active: friend.inviter.active,
+          };
+        }
+
+        return result;
+      });
+
+      return rep.status(StatusCodes.OK).send({ friends: friendList });
     },
   });
 
@@ -131,17 +192,17 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
         },
       });
 
-        const inviterUser: InviterUser = {
+      const inviterUser: FriendRequest = {
         id: friendRequest.id,
         username: friendRequest.inviter.username,
         email: friendRequest.inviter.email,
-          seen: friendRequest.seen,
-        };
+        seen: friendRequest.seen,
+      };
 
       sendFriendRequestsUpdateToUser({
         userId: user.id,
         type: FriendRequestType.newFriendInvite,
-            payload: inviterUser,
+        payload: inviterUser,
       });
 
       return rep
@@ -185,7 +246,7 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
         },
       });
 
-      const modifiedInvites: InviterUser[] = invites.map((invite) => {
+      const modifiedInvites: FriendRequest[] = invites.map((invite) => {
         return {
           id: invite.id,
           username: invite.inviter.username,
