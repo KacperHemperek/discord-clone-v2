@@ -7,7 +7,7 @@ import {
   RegisterUserBodyType,
   RegisterUserCreatedResponseType,
 } from '@shared-types/auth';
-import { ErrorBaseResponseType } from '@shared-types/error-response';
+import { ErrorBaseResponseType } from '@shared-types/commonResponses';
 
 type RegisterMutationOptions = MutationHookOptions<
   RegisterUserCreatedResponseType['user'],
@@ -41,7 +41,7 @@ export function useRegister(options?: RegisterMutationOptions) {
     },
     onSuccess: (data, variables, context) => {
       queryClient.setQueryData(['user'], data);
-      navigate('/home/friends');
+      navigate('/home/friends/');
       options?.onSuccess?.(data, variables, context);
     },
   });

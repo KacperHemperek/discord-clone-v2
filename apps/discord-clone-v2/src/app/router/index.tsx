@@ -3,10 +3,10 @@ import LoginPage from './pages/Login';
 import RegisterPage from './pages/Register';
 import BaseLayout from './layouts/BaseLayout';
 import AuthGuard from './layouts/AuthGuard';
-import FriendsPage from './pages/Friends';
 import FriendsLayout from './layouts/FriendsLayout';
 import FriendRequestsPage from './pages/FriendRequests';
 import AllFriendsPage from './pages/AllFriends';
+import InviteUserPage from './pages/InviteUser';
 
 export const router = createBrowserRouter([
   {
@@ -23,19 +23,15 @@ export const router = createBrowserRouter([
             children: [
               {
                 path: '',
-                element: <FriendsPage />,
+                element: <AllFriendsPage />,
               },
               {
                 path: 'requests',
                 element: <FriendRequestsPage />,
               },
               {
-                path: 'all',
-                element: <AllFriendsPage />,
-              },
-              {
                 path: 'invite',
-                element: <div>invite</div>,
+                element: <InviteUserPage />,
               },
             ],
           },

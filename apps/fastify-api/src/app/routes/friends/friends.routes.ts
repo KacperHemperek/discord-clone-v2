@@ -6,7 +6,10 @@ import {
   GetAllFriendsResponseBody,
   SendFriendRequestBody,
 } from './friends.schema';
-import { ErrorBaseResponse } from '../../utils/error-response';
+import {
+  ErrorBaseResponse,
+  MessageSuccessResponse,
+} from '../../utils/commonResponses';
 
 type FriendRequest = {
   id: string;
@@ -129,6 +132,7 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
       response: {
         [StatusCodes.BAD_REQUEST]: ErrorBaseResponse,
         [StatusCodes.NOT_FOUND]: ErrorBaseResponse,
+        [StatusCodes.OK]: MessageSuccessResponse,
       },
     },
     preHandler: fastify.auth([fastify.userRequired]),
@@ -149,7 +153,7 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
 
       if (!user) {
         return await rep.status(StatusCodes.NOT_FOUND).send({
-          message: `User with email not found`,
+          message: `User with email ${email} not found`,
         });
       }
 

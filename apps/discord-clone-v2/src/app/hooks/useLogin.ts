@@ -6,7 +6,7 @@ import type {
   LoginUserBodyType,
 } from '@shared-types/auth';
 
-import type { ErrorBaseResponseType } from '@shared-types/error-response';
+import type { ErrorBaseResponseType } from '@shared-types/commonResponses';
 import { MutationHookOptions } from '../types/utils';
 import { useNavigate } from 'react-router-dom';
 
@@ -43,7 +43,7 @@ export function useLogin(options?: AuthLoginMutationOptions) {
     },
     onSuccess: (data, variables, context) => {
       queryClient.setQueryData(['user'], data);
-      navigate('/home/friends');
+      navigate('/home/friends/');
       options?.onSuccess?.(data, variables, context);
     },
   });

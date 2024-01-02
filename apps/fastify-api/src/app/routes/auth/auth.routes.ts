@@ -9,7 +9,7 @@ import {
   RegisterUserCreatedResponse,
 } from './auth.schema';
 import { LoginUserBodyType, RegisterUserBodyType } from '@shared-types/auth';
-import { ErrorBaseResponse } from '../../utils/error-response';
+import { ErrorBaseResponse } from '../../utils/commonResponses';
 
 const authPlugin: FastifyPluginCallback = async (fastify) => {
   fastify.post<{ Body: RegisterUserBodyType }>('/register', {

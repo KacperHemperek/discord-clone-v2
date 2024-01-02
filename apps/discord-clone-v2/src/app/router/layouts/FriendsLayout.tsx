@@ -18,7 +18,7 @@ export default function FriendsLayout() {
         <div className='border-r border-dc-neutral-600' />
 
         <div className='flex gap-4'>
-          <FriendsNavLink to='/home/friends/all' label='All' />
+          <FriendsNavLink to='/home/friends' label='All' />
           <FriendsNavLink
             to='/home/friends/requests'
             label='Requests'
