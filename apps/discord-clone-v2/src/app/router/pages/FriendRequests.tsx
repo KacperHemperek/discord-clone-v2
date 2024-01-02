@@ -1,10 +1,10 @@
 import React from 'react';
-import { Search } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import FriendRequestItem from '../../components/FriendRequestItem';
+import FriendRequestItem from '../../components/friends/FriendRequestItem';
 import { useFriendRequests } from '../../context/FriendRequestsProvider';
 import { api } from '../../utils/api';
-import { Container } from '../../components/FriendPageContainer';
+import { Container } from '../../components/friends/FriendPageContainer';
+import SearchBar from '../../components/SearchBar';
 
 export default function FriendRequestsPage() {
   const { requests, markAllAsSeen, hasNewRequests } = useFriendRequests();
@@ -37,16 +37,7 @@ export default function FriendRequestsPage() {
   return (
     <>
       <Container className='pt-4'>
-        <div className='bg-dc-neutral-950 px-3 py-1 rounded-md flex items-center gap-3 placeholder:text-dc-neutral-300'>
-          <input
-            type='text'
-            className='bg-transparent outline-none flex-grow ring-0'
-            placeholder='Search'
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <Search size={20} className='text-dc-neutral-300' />
-        </div>
+        <SearchBar value={search} setValue={setSearch} />
       </Container>
       <Container className='py-4'>
         <h1 className='uppercase text-xs font-semibold tracking-[0.02em] text-dc-neutral-200'>

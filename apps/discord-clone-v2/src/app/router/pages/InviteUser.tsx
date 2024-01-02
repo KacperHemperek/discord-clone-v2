@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ErrorBaseResponseType } from '@shared-types/commonResponses';
 import { cn } from '../../utils/cn';
-import { Container } from '../../components/FriendPageContainer';
+import { Container } from '../../components/friends/FriendPageContainer';
 import { api } from '../../utils/api';
 import { ClientError } from '../../utils/clientError';
 

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Check, X } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
-import { api } from '../utils/api';
-import { useFriendRequests } from '../context/FriendRequestsProvider';
+import { api } from '../../utils/api';
+import { useFriendRequests } from '../../context/FriendRequestsProvider';
 
 export default function FriendRequestItem({
   id,

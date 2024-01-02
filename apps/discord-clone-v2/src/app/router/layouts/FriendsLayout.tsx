@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { useFriendRequests } from '../../context/FriendRequestsProvider';
-import { FriendsNavLink } from '../../components/FriendsNavLink';
+import { FriendsNavLink } from '../../components/friends/FriendsNavLink';
 import { User } from 'lucide-react';
 
 export default function FriendsLayout() {
