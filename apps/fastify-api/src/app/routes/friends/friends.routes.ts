@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { StatusCodes } from 'http-status-codes';
 import { SocketStream } from '@fastify/websocket';
-import { FriendType, SendFriendRequestBodyType } from '@shared-types/friends';
+import { FriendType, SendFriendRequestBodyType } from '@shared/types/friends';
 import {
   GetAllFriendsResponseBody,
   SendFriendRequestBody,

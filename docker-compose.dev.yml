@@ -9,8 +9,9 @@ services:
       context: .
     volumes:
       - ./apps/fastify-api:/app/apps/fastify-api
-      - ./types:/app/types
-      - ./configs:/app/configs
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./tsconfig.base.json:/app/tsconfig.base.json
+      - ./shared:/app/shared
     ports:
       - ${BE_PORT}:${BE_PORT}
     env_file:
@@ -26,8 +27,9 @@ services:
       - 4200:4200
     volumes:
       - ./apps/discord-clone-v2:/app/apps/discord-clone-v2
-      - ./types:/app/types
-      - ./configs:/app/configs
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./tsconfig.base.json:/app/tsconfig.base.json
+      - ./shared:/app/shared
     env_file:
       - .env
 
@@ -41,8 +43,9 @@ services:
       - 5555:5555
     volumes:
       - ./apps/fastify-api:/app/apps/fastify-api
-      - ./types:/app/types
-      - ./configs:/app/configs
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./tsconfig.base.json:/app/tsconfig.base.json
+      - ./shared:/app/shared
     env_file:
       - .env
 

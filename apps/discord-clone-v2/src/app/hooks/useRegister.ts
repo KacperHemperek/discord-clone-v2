@@ -1,13 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-
-import { MutationHookOptions } from '../types/utils';
-import { api } from '../utils/api';
-import { useNavigate } from 'react-router-dom';
 import {
   RegisterUserBodyType,
   RegisterUserCreatedResponseType,
-} from '@shared-types/auth';
-import { ErrorBaseResponseType } from '@shared-types/commonResponses';
+} from '@shared/types/auth';
+import { ErrorBaseResponseType } from '@shared/types/commonResponses';
+import { useNavigate } from 'react-router-dom';
+import { MutationHookOptions } from '../types/utils';
+import { api } from '../utils/api';
 
 type RegisterMutationOptions = MutationHookOptions<
   RegisterUserCreatedResponseType['user'],

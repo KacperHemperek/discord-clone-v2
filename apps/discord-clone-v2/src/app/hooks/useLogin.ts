@@ -4,9 +4,9 @@ import { api } from '../utils/api';
 import type {
   LoginUserSuccessfullyResponseType,
   LoginUserBodyType,
-} from '@shared-types/auth';
+} from '@shared/types/auth';
 
-import type { ErrorBaseResponseType } from '@shared-types/commonResponses';
+import type { ErrorBaseResponseType } from '@shared/types/commonResponses';
 import { MutationHookOptions } from '../types/utils';
 import { useNavigate } from 'react-router-dom';
 

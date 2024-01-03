@@ -1,7 +1,7 @@
 import {
   ALL_FRIEND_INVITES_TYPE,
   NEW_FRIEND_INVITE_TYPE,
-} from '@configs/friends';
+} from '@shared/configs/friends';
 import React from 'react';
 import { getWebsocketConnection } from '../utils/websocket';
 import { z } from 'zod';

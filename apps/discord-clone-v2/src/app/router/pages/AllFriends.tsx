@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { GetAllFriendsResponseBodyType } from '@shared-types/friends';
+import { GetAllFriendsResponseBodyType } from '@shared/types/friends';
 import { api } from '../../utils/api';
 import FriendListItem from '../../components/friends/FriendListItem';
 import { Container } from '../../components/friends/FriendPageContainer';

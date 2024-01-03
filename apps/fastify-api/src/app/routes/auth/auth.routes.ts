@@ -1,5 +1,6 @@
 import { FastifyPluginCallback } from 'fastify';
 import { StatusCodes } from 'http-status-codes';
+import { LoginUserBodyType, RegisterUserBodyType } from '@shared/types/auth';
 import {
   GetLoggedInUserResponse,
   LoginUserBody,
@@ -8,7 +9,6 @@ import {
   RegisterUserBody,
   RegisterUserCreatedResponse,
 } from './auth.schema';
-import { LoginUserBodyType, RegisterUserBodyType } from '@shared-types/auth';
 import { ErrorBaseResponse } from '../../utils/commonResponses';
 
 const authPlugin: FastifyPluginCallback = async (fastify) => {
