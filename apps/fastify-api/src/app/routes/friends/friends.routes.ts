@@ -171,6 +171,8 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
         },
       });
 
+      // TODO: if user declined friend request, we can send it again after some time (1 day?)
+      // TODO: if user that declined friend request is the one that sends friend request now send the request without the time limit
       if (existingFriendship) {
         const messages = {
           pending: `You already send friend request to user ${user.username}`,
