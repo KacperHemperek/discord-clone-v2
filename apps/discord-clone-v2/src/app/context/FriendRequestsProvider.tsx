@@ -1,7 +1,4 @@
-import {
-  ALL_FRIEND_INVITES_TYPE,
-  NEW_FRIEND_INVITE_TYPE,
-} from '@shared/configs/friends';
+import { FriendRequestType } from '@shared/configs/friends';
 import React from 'react';
 import { getWebsocketConnection } from '../utils/websocket';
 import { z } from 'zod';
@@ -16,12 +13,12 @@ const inviteItemSchema = z.object({
 });
 
 const allFriendsRequestSchema = z.object({
-  type: z.literal(ALL_FRIEND_INVITES_TYPE),
+  type: z.literal(FriendRequestType.allFriendInvites),
   payload: z.array(inviteItemSchema),
 });
 
 const newFriendRequestSchema = z.object({
-  type: z.literal(NEW_FRIEND_INVITE_TYPE),
+  type: z.literal(FriendRequestType.newFriendInvite),
   payload: inviteItemSchema,
 });
 
@@ -51,7 +48,7 @@ function useFriendRequestsValue() {
   function handleWebsocketMessage({ data }: { data: string }) {
     const jsonData = JSON.parse(data);
 
-    if (jsonData?.type === ALL_FRIEND_INVITES_TYPE) {
+    if (jsonData?.type === FriendRequestType.allFriendInvites) {
       const parsedData = allFriendsRequestSchema.safeParse(jsonData);
 
       if (parsedData.success) {
@@ -59,7 +56,7 @@ function useFriendRequestsValue() {
       }
     }
 
-    if (jsonData?.type === NEW_FRIEND_INVITE_TYPE) {
+    if (jsonData?.type === FriendRequestType.newFriendInvite) {
       const parsedData = newFriendRequestSchema.safeParse(jsonData);
 
       if (parsedData.success) {

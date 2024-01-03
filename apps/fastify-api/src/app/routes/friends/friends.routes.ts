@@ -2,6 +2,10 @@ import { FastifyInstance } from 'fastify';
 import { StatusCodes } from 'http-status-codes';
 import { SocketStream } from '@fastify/websocket';
 import { FriendType, SendFriendRequestBodyType } from '@shared/types/friends';
+// import {
+//   FriendRequestStatus,
+//   FriendRequestType,
+// } from '@shared/configs/friends';
 import {
   GetAllFriendsResponseBody,
   SendFriendRequestBody,
@@ -10,13 +14,6 @@ import {
   ErrorBaseResponse,
   MessageSuccessResponse,
 } from '../../utils/commonResponses';
-
-type FriendRequest = {
-  id: string;
-  username: string;
-  email: string;
-  seen: boolean;
-};
 
 export enum FriendRequestType {
   newFriendInvite = 'NEW_FRIEND_INVITE',
@@ -30,6 +27,13 @@ export enum FriendRequestStatus {
   accepted = 'accepted',
   declined = 'declined',
 }
+
+type FriendRequest = {
+  id: string;
+  username: string;
+  email: string;
+  seen: boolean;
+};
 
 export const friendsRoutes = async (fastify: FastifyInstance) => {
   const connections = new Map<string, SocketStream>();
