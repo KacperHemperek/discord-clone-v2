@@ -1,6 +1,12 @@
 import { FastifyError } from 'fastify';
+import {
+  ApiHandledErrorResponse,
+  ApiUnhandledErrorResponse,
+  ValidationErrorResponse,
+} from '@shared/types/errors';
 import fastifyPlugin from 'fastify-plugin';
 import { ApiError } from '../utils/errors';
+import { StatusCodes } from 'http-status-codes';
 
 export const errorHandler = fastifyPlugin(async (fastify) => {
   fastify.setErrorHandler((error: FastifyError | ApiError, request, reply) => {
@@ -11,39 +17,42 @@ export const errorHandler = fastifyPlugin(async (fastify) => {
     );
 
     if (error instanceof ApiError) {
-      return reply.code(error.statusCode).send({
-        statusCode: error.statusCode,
+      const errorResponse: ApiHandledErrorResponse = {
         message: error.message,
-      });
-    }
+        statusCode: error.statusCode,
+      };
 
-    if (!error.statusCode) {
-      return reply.code(500).send({
-        statusCode: 500,
-        message: 'Internal server error',
-        cause: error.message,
-      });
+      return reply.code(error.statusCode).send(errorResponse);
     }
 
     if (error.validation) {
-      const field = error.validation[0]?.params['missingProperty'];
+      const field =
+        (error.validation[0]?.params['missingProperty'] as
+          | string
+          | undefined) ?? 'unknown';
 
       const message = field
         ? `Invalid request body, missing field: ${field}`
         : 'Invalid request body, unknown field missing';
 
-      return reply.code(error.statusCode).send({
-        statusCode: error.statusCode,
+      const errorResponse: ValidationErrorResponse = {
+        statusCode: StatusCodes.BAD_REQUEST,
         message,
-        field: field ?? 'unknown',
+        field: field,
         cause: error.validation,
-      });
+      };
+
+      return reply.code(StatusCodes.BAD_REQUEST).send(errorResponse);
     }
 
-    reply.code(error.statusCode).send({
-      statusCode: error.statusCode,
+    const errorResponse: ApiUnhandledErrorResponse = {
       message: 'Internal Server Error',
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       cause: error.message,
-    });
+    };
+
+    reply
+      .code(error.statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR)
+      .send(errorResponse);
   });
 });
