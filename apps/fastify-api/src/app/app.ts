@@ -7,11 +7,13 @@ import sensible from './plugins/sensible';
 import auth from './plugins/auth';
 import cookies from './plugins/cookies';
 import db from './plugins/db';
+import { errorHandler } from './plugins/errorHandler';
 
 /* eslint-disable-next-line */
 export interface AppOptions {}
 
 export async function app(fastify: FastifyInstance) {
+  fastify.register(errorHandler);
   // installed plugins
   fastify.register(cors, {
     origin: 'http://localhost:4200',
