@@ -1,6 +1,6 @@
 import fastifyPlugin from 'fastify-plugin';
 import cookie, { CookieSerializeOptions } from '@fastify/cookie';
-import {} from 'fastify';
+import { FastifyReply, FastifyRequest } from 'fastify';
 
 export type AddAccessTokenToCookiesHandler = (accessToken: string) => void;
 
@@ -50,6 +50,7 @@ export default fastifyPlugin(async function (fastify) {
   });
 
   function addAccessTokenToCookies(
+    this: FastifyReply,
     accessToken: string
   ): ReturnType<AddAccessTokenToCookiesHandler> {
     this.setCookie(
@@ -60,6 +61,7 @@ export default fastifyPlugin(async function (fastify) {
   }
 
   function addRefreshTokenToCookies(
+    this: FastifyReply,
     refreshToken: string
   ): ReturnType<AddRefreshTokenToCookiesHandler> {
     this.setCookie(
@@ -69,14 +71,18 @@ export default fastifyPlugin(async function (fastify) {
     );
   }
 
-  function getTokensFromCookies(): ReturnType<GetTokensFromCookiesHandler> {
+  function getTokensFromCookies(
+    this: FastifyRequest
+  ): ReturnType<GetTokensFromCookiesHandler> {
     return {
-      accessToken: this.cookies[fastify.cookieConfig.accessTokenName],
-      refreshToken: this.cookies[fastify.cookieConfig.refreshTokenName],
+      accessToken: this.cookies[fastify.cookieConfig.accessTokenName] ?? '',
+      refreshToken: this.cookies[fastify.cookieConfig.refreshTokenName] ?? '',
     };
   }
 
-  function removeAccessTokenFromCookies(): ReturnType<RemoveTokenFromCookiesHandler> {
+  function removeAccessTokenFromCookies(
+    this: FastifyReply
+  ): ReturnType<RemoveTokenFromCookiesHandler> {
     // for some reason clearCookie didn't work for that cookie
     this.setCookie(fastify.cookieConfig.accessTokenName, '', {
       ...fastify.cookieConfig.accessTokenCookieConfig,
@@ -84,7 +90,9 @@ export default fastifyPlugin(async function (fastify) {
     });
   }
 
-  function removeRefreshTokenFromCookies(): ReturnType<RemoveTokenFromCookiesHandler> {
+  function removeRefreshTokenFromCookies(
+    this: FastifyReply
+  ): ReturnType<RemoveTokenFromCookiesHandler> {
     // for some reason clearCookie didn't work for that cookie
     this.setCookie(fastify.cookieConfig.refreshTokenName, '', {
       ...fastify.cookieConfig.refreshTokenCookieConfig,

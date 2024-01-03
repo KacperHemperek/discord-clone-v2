@@ -11,6 +11,11 @@
     }
   ],
   "compilerOptions": {
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "lib": ["es2022"],
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
+    "outDir": "dist",
+    "sourceMap": true
   }
 }
