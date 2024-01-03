@@ -75,10 +75,22 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     credentials: 'include',
   };
 
-  const headers =
-    options.method === 'GET'
-      ? options.headers
-      : { ...baseHeaders, ...options.headers };
+  let headers;
+
+  if (options.method === 'GET') {
+    headers = {
+      ...options.headers,
+    };
+  } else if (options.body) {
+    headers = {
+      ...baseHeaders,
+      ...options.headers,
+    };
+  } else {
+    headers = {
+      ...options.headers,
+    };
+  }
 
   const res = await fetch(url, {
     ...baseOptions,
