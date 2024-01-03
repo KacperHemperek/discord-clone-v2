@@ -9,7 +9,8 @@
     "moduleResolution": "Bundler",
     "module": "ESNext",
     "noEmit": true,
-    "lib": ["es2022", "dom", "dom.iterable"]
+    "lib": ["es2022", "dom", "dom.iterable"],
+    "outDir": "../../dist/apps/discord-clone-v2"
   },
   "files": [],
   "include": [],
