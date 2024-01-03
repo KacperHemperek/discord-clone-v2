@@ -9,7 +9,7 @@ import {
   RegisterUserBody,
   RegisterUserCreatedResponse,
 } from './auth.schema';
-import { ErrorBaseResponse } from '../../utils/commonResponses';
+import { ApiError } from '../../utils/errors';
 
 const authPlugin: FastifyPluginCallback = async (fastify) => {
   fastify.post<{ Body: RegisterUserBodyType }>('/register', {
@@ -17,7 +17,6 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
       body: RegisterUserBody,
       response: {
         [StatusCodes.CREATED]: RegisterUserCreatedResponse,
-        [StatusCodes.UNAUTHORIZED]: ErrorBaseResponse,
       },
     },
     handler: async (request, reply) => {
@@ -27,11 +26,10 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
       const user = await fastify.db.user.findUnique({ where: { email } });
 
       if (user) {
-        fastify.log.info(`[ routes/auth/register ] User already exists.`);
-        reply
-          .status(StatusCodes.UNAUTHORIZED)
-          .send({ message: 'User with that email already exists' });
-        return await reply;
+        throw new ApiError(
+          StatusCodes.UNAUTHORIZED,
+          'User with that email already exists'
+        );
       }
 
       const passwordRegex = new RegExp(
@@ -39,20 +37,14 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
       );
 
       if (!passwordRegex.test(password)) {
-        fastify.log.info(
-          `[ routes/auth/register ] Password does not match restrictions.`
+        throw new ApiError(
+          StatusCodes.UNAUTHORIZED,
+          'Password must be at least 8 characters long, contain at least 1 uppercase letter, 1 lowercase letter, and 1 number'
         );
-        return await reply.status(StatusCodes.UNAUTHORIZED).send({
-          message:
-            'Password must be at least 8 characters long, contain at least 1 uppercase letter, 1 lowercase letter, and 1 number',
-        });
       }
 
       if (password !== confirmPassword) {
-        fastify.log.info(`[ routes/auth/register ] Passwords do not match.`);
-        return await reply.status(StatusCodes.UNAUTHORIZED).send({
-          message: 'Passwords do not match',
-        });
+        throw new ApiError(StatusCodes.UNAUTHORIZED, 'Passwords do not match');
       }
 
       const createdUser = await fastify.db.user.create({
@@ -95,7 +87,6 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
       body: LoginUserBody,
       response: {
         [StatusCodes.OK]: LoginUserSuccessfullyResponse,
-        [StatusCodes.UNAUTHORIZED]: ErrorBaseResponse,
       },
     },
     handler: async (request, reply) => {
@@ -103,9 +94,10 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
       const user = await fastify.db.user.findUnique({ where: { email } });
 
       if (!user || user.password !== password) {
-        return await reply
-          .status(StatusCodes.UNAUTHORIZED)
-          .send({ message: 'Invalid username or password' });
+        throw new ApiError(
+          StatusCodes.UNAUTHORIZED,
+          'Invalid username or password'
+        );
       }
 
       const userObj = {

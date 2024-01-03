@@ -2,18 +2,13 @@ import { FastifyInstance } from 'fastify';
 import { StatusCodes } from 'http-status-codes';
 import { SocketStream } from '@fastify/websocket';
 import { FriendType, SendFriendRequestBodyType } from '@shared/types/friends';
-// import {
-//   FriendRequestStatus,
-//   FriendRequestType,
-// } from '@shared/configs/friends';
+
 import {
   GetAllFriendsResponseBody,
   SendFriendRequestBody,
 } from './friends.schema';
-import {
-  ErrorBaseResponse,
-  MessageSuccessResponse,
-} from '../../utils/commonResponses';
+import { MessageSuccessResponse } from '../../utils/commonResponses';
+import { ApiError } from '../../utils/errors';
 
 export enum FriendRequestType {
   newFriendInvite = 'NEW_FRIEND_INVITE',
@@ -134,8 +129,6 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
     schema: {
       body: SendFriendRequestBody,
       response: {
-        [StatusCodes.BAD_REQUEST]: ErrorBaseResponse,
-        [StatusCodes.NOT_FOUND]: ErrorBaseResponse,
         [StatusCodes.OK]: MessageSuccessResponse,
       },
     },
@@ -144,9 +137,10 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
       const { email } = req.body;
 
       if (req.user.email === email) {
-        return await rep.status(StatusCodes.BAD_REQUEST).send({
-          message: `You can't send friend invite to yourself`,
-        });
+        throw new ApiError(
+          StatusCodes.BAD_REQUEST,
+          `You can't send friend invite to yourself`
+        );
       }
 
       const user = await fastify.db.user.findFirst({
@@ -156,9 +150,10 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
       });
 
       if (!user) {
-        return await rep.status(StatusCodes.NOT_FOUND).send({
-          message: `User with email ${email} not found`,
-        });
+        throw new ApiError(
+          StatusCodes.NOT_FOUND,
+          `User with email ${email} not found`
+        );
       }
 
       const existingFriendship = await fastify.db.friendship.findFirst({
@@ -177,9 +172,10 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
       });
 
       if (existingFriendship) {
-        return await rep.status(StatusCodes.BAD_REQUEST).send({
-          message: `You are already friends with user ${user.username}`,
-        });
+        throw new ApiError(
+          StatusCodes.BAD_REQUEST,
+          `You are already friends with user ${user.username}`
+        );
       }
 
       const friendRequest = await fastify.db.friendship.create({
@@ -296,6 +292,11 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
   });
 
   fastify.put<{ Params: { inviteId: string } }>('/invites/:inviteId/accept', {
+    schema: {
+      response: {
+        [StatusCodes.OK]: MessageSuccessResponse,
+      },
+    },
     preHandler: fastify.auth([fastify.userRequired]),
     handler: async (req, rep) => {
       const { inviteId } = req.params;
@@ -317,9 +318,7 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
       });
 
       if (!invite) {
-        return await rep.status(StatusCodes.NOT_FOUND).send({
-          message: `Friend invite not found`,
-        });
+        throw new ApiError(StatusCodes.NOT_FOUND, 'Friend invite not found');
       }
 
       await fastify.db.friendship.update({
@@ -352,6 +351,11 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
   });
 
   fastify.put<{ Params: { inviteId: string } }>('/invites/:inviteId/decline', {
+    schema: {
+      response: {
+        [StatusCodes.OK]: MessageSuccessResponse,
+      },
+    },
     preHandler: fastify.auth([fastify.userRequired]),
     handler: async (req, rep) => {
       const { inviteId } = req.params;
@@ -373,9 +377,7 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
       });
 
       if (!invite) {
-        return await rep.status(StatusCodes.NOT_FOUND).send({
-          message: `Friend invite not found`,
-        });
+        throw new ApiError(StatusCodes.NOT_FOUND, 'Friend invite not found');
       }
 
       await fastify.db.friendship.update({

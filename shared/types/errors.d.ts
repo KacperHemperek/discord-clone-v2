@@ -6,16 +6,19 @@ export type ValidationErrorResponse = {
   message: string;
   field: string;
   cause: ValidationResult[];
+  type: 'validation';
 };
 
 export type ApiHandledErrorResponse = {
   message: string;
   statusCode: StatusCodes;
+  type: 'handled';
 };
 
 export type ApiUnhandledErrorResponse = {
   cause: string;
-} & ApiHandledErrorResponse;
+  type: 'unhandled';
+} & Omit<ApiHandledErrorResponse, 'type'>;
 
 export type ApiErrorResponse =
   | ApiHandledErrorResponse
