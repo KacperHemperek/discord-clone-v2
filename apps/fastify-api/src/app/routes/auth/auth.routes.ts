@@ -23,12 +23,16 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
       fastify.log.info(`[ routes/auth/register ] Registering user...`);
       const { username, password, confirmPassword, email } = request.body;
 
-      const user = await fastify.db.user.findUnique({ where: { email } });
+      const user = await fastify.db.user.findFirst({
+        where: { OR: [{ email }, { username }] },
+      });
 
       if (user) {
+        const field = user.email === email ? 'email' : 'username';
+
         throw new ApiError(
           StatusCodes.UNAUTHORIZED,
-          'User with that email already exists'
+          `User with that ${field} already exists`
         );
       }
 
