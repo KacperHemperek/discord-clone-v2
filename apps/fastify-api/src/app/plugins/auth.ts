@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
 import auth from '@fastify/auth';
 import { StatusCodes } from 'http-status-codes';
+import { ApiError } from '../utils/errors';
 
 type SignTokenPayload = {
   email: string;
@@ -80,10 +81,10 @@ export default fastifyPlugin(async function (fastify) {
       }
       return;
     }
-    reply
-      .status(StatusCodes.UNAUTHORIZED)
-      .send({ message: 'User not verified' });
-    throw new Error('User not verified');
+    throw new ApiError(
+      StatusCodes.UNAUTHORIZED,
+      'User not verified, authentication required'
+    );
   };
 
   fastify.decorate('signAccessToken', signAccessToken);
