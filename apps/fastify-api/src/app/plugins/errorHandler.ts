@@ -20,6 +20,7 @@ export const errorHandler = fastifyPlugin(async (fastify) => {
       const errorResponse: ApiHandledErrorResponse = {
         message: error.message,
         statusCode: error.statusCode,
+        type: 'handled',
       };
 
       return reply.code(error.statusCode).send(errorResponse);
@@ -40,6 +41,7 @@ export const errorHandler = fastifyPlugin(async (fastify) => {
         message,
         field: field,
         cause: error.validation,
+        type: 'validation',
       };
 
       return reply.code(StatusCodes.BAD_REQUEST).send(errorResponse);
@@ -49,6 +51,7 @@ export const errorHandler = fastifyPlugin(async (fastify) => {
       message: 'Internal Server Error',
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       cause: error.message,
+      type: 'unhandled',
     };
 
     reply

@@ -172,10 +172,16 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
       });
 
       if (existingFriendship) {
-        throw new ApiError(
-          StatusCodes.BAD_REQUEST,
-          `You are already friends with user ${user.username}`
-        );
+        const messages = {
+          pending: `You already send friend request to user ${user.username}`,
+          accepted: `You are already friends with user ${user.username}`,
+          declined: `${user.username} declined your friend request`,
+        };
+
+        const message =
+          messages[existingFriendship.status as keyof typeof messages];
+
+        throw new ApiError(StatusCodes.BAD_REQUEST, message);
       }
 
       const friendRequest = await fastify.db.friendship.create({
