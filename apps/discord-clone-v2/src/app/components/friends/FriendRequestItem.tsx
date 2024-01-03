@@ -3,6 +3,7 @@ import { Check, X } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { api } from '../../utils/api';
 import { useFriendRequests } from '../../context/FriendRequestsProvider';
+import FriendListItemButton from './FriendItemButton';
 
 export default function FriendRequestItem({
   id,
@@ -79,18 +80,14 @@ export default function FriendRequestItem({
         </div>
         {/* Action Buttons */}
         <div className='flex gap-3'>
-          <button
+          <FriendListItemButton
             onClick={acceptFriendRequest}
-            className='p-1.5 rounded-full bg-dc-neutral-900 hover:text-dc-green-600'
-          >
-            <Check size={20} />
-          </button>
-          <button
+            icon={<Check size={20} />}
+          />
+          <FriendListItemButton
             onClick={declineFriendRequest}
-            className='p-1.5 rounded-full bg-dc-neutral-900 hover:text-dc-red-500'
-          >
-            <X size={20} />
-          </button>
+            icon={<X size={20} />}
+          />
         </div>
       </div>
     </div>

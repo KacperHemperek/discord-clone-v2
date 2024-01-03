@@ -1,5 +1,6 @@
 import React from 'react';
 import { MessageCircle } from 'lucide-react';
+import FriendListItemButton from './FriendItemButton';
 
 export default function FriendListItem({
   id,
@@ -21,12 +22,10 @@ export default function FriendListItem({
         </div>
         {/* Action Buttons */}
         <div className='flex gap-3'>
-          <button
-            onClick={() => console.log('accept friend request')}
-            className='p-1.5 rounded-full bg-dc-neutral-900'
-          >
-            <MessageCircle size={20} />
-          </button>
+          <FriendListItemButton
+            icon={<MessageCircle size={20} />}
+            onClick={() => console.log('open chat window')}
+          />
         </div>
       </div>
     </div>
