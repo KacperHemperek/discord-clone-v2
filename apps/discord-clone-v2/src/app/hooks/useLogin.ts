@@ -5,8 +5,6 @@ import type {
   LoginUserSuccessfullyResponseType,
   LoginUserBodyType,
 } from '@shared/types/auth';
-
-import type { ErrorBaseResponseType } from '@shared/types/commonResponses';
 import { MutationHookOptions } from '../types/utils';
 import { useNavigate } from 'react-router-dom';
 
@@ -24,20 +22,12 @@ export function useLogin(options?: AuthLoginMutationOptions) {
   return useMutation({
     ...options,
     mutationFn: async (data) => {
-      const res = await api('/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!res.ok) {
-        const json = (await res.json()) as ErrorBaseResponseType;
-        throw new Error(json.message);
-      }
-
-      const json = (await res.json()) as LoginUserSuccessfullyResponseType;
+      const json = await api.post<LoginUserSuccessfullyResponseType>(
+        '/auth/login',
+        {
+          body: JSON.stringify(data),
+        }
+      );
 
       return json.user;
     },

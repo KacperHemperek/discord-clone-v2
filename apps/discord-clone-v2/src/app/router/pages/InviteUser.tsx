@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useMutation } from '@tanstack/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ErrorBaseResponseType } from '@shared/types/commonResponses';
+import { MessageSuccessResponseType } from '@shared/types/commonResponses';
 import { cn } from '../../utils/cn';
 import { Container } from '../../components/friends/FriendPageContainer';
 import { api } from '../../utils/api';
@@ -28,23 +28,10 @@ export default function InviteUserPage() {
 
   const { mutate: sendFriendRequestMutation } = useMutation({
     mutationKey: ['invite-friend'],
-    mutationFn: async (data: InviteFormValues) => {
-      const res = await api('/friends/invites', {
-        method: 'POST',
+    mutationFn: async (data: InviteFormValues) =>
+      await api.post<MessageSuccessResponseType>('/friends/invites', {
         body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      const result = (await res.json()) as ErrorBaseResponseType;
-
-      if (!res.ok) {
-        throw new ClientError(result.message, res.status);
-      }
-
-      return result as { message: string };
-    },
+      }),
     onError: (err) => {
       if (err instanceof ClientError) {
         form.setError('email', {

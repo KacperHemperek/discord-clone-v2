@@ -10,15 +10,9 @@ export default function AllFriendsPage() {
   const { data } = useQuery({
     queryKey: ['all-friends'],
     queryFn: async () => {
-      const res = await api(`/friends/`);
+      const data = await api.get<GetAllFriendsResponseBodyType>(`/friends`);
 
-      const resultObj = await res.json();
-
-      if (!res.ok) {
-        throw new Error(resultObj.message);
-      }
-
-      return resultObj as GetAllFriendsResponseBodyType;
+      return data;
     },
   });
 

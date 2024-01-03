@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { api } from '../../utils/api';
 import { useFriendRequests } from '../../context/FriendRequestsProvider';
 import FriendListItemButton from './FriendItemButton';
+import { MessageSuccessResponseType } from '@shared/types/commonResponses';
 
 export default function FriendRequestItem({
   id,
@@ -21,16 +22,9 @@ export default function FriendRequestItem({
   const { mutate: acceptMutation } = useMutation({
     mutationKey: ['friend-request-accept', id],
     mutationFn: async () => {
-      const res = await api(`/friends/invites/${id}/accept`, {
-        method: 'PUT',
-      });
-
-      const data = await res.json().catch(() => null);
-
-      if (!res.ok) {
-        console.error(data?.message);
-        throw new Error(data?.message);
-      }
+      const data = await api.put<MessageSuccessResponseType>(
+        `/friends/invites/${id}/accept`
+      );
 
       return data;
     },
@@ -43,17 +37,9 @@ export default function FriendRequestItem({
   const { mutate: declineMutation } = useMutation({
     mutationKey: ['friend-request-decline', id],
     mutationFn: async () => {
-      const res = await api(`/friends/invites/${id}/decline`, {
-        method: 'PUT',
-      });
-
-      const data = await res.json().catch(() => null);
-
-      if (!res.ok) {
-        console.error(data?.message);
-        throw new Error(data?.message);
-      }
-
+      const data = await api.put<MessageSuccessResponseType>(
+        `/friends/invites/${id}/decline`
+      );
       return data;
     },
     onSuccess: () => {

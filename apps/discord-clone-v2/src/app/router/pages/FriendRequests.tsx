@@ -1,5 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { MessageSuccessResponseType } from '@shared/types/commonResponses';
 import FriendRequestItem from '../../components/friends/FriendRequestItem';
 import { useFriendRequests } from '../../context/FriendRequestsProvider';
 import { api } from '../../utils/api';
@@ -13,16 +14,10 @@ export default function FriendRequestsPage() {
     enabled: hasNewRequests,
     queryKey: ['seen-all'],
     queryFn: async () => {
-      const res = await api('/friends/invites/seen', {
-        method: 'PUT',
-      });
+      const data = await api.put<MessageSuccessResponseType>(
+        '/friends/invites/seen'
+      );
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        console.error(data?.message);
-        throw new Error(data?.message);
-      }
       markAllAsSeen();
       return data;
     },

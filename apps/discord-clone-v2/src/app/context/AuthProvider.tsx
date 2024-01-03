@@ -1,7 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { User } from '@prisma/client';
 import { api } from '../utils/api';
+import { GetLoggedInUserResponseType } from '@shared/types/auth';
 
 export function useUserQuery() {
   const {
@@ -11,12 +11,8 @@ export function useUserQuery() {
   } = useQuery({
     queryKey: ['user'],
     queryFn: async () => {
-      const res = await api('/auth/me');
-      if (!res.ok) {
-        return null;
-      }
-      const { user }: { user: Pick<User, 'id' | 'username'> } =
-        await res.json();
+      const { user } = await api.get<GetLoggedInUserResponseType>('/auth/me');
+
       return user;
     },
   });
