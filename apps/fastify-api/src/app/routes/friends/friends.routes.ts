@@ -33,6 +33,72 @@ type FriendRequest = {
 export const friendsRoutes = async (fastify: FastifyInstance) => {
   const connections = new Map<string, SocketStream>();
 
+  async function createFriendshipAndSendNotificationToUser({
+    inviterId,
+    inviteeId,
+    friendshipIdToRemove,
+  }: {
+    inviterId: string;
+    inviteeId: string;
+    friendshipIdToRemove?: string;
+  }) {
+    try {
+      fastify.log.info(`[ router/friends/invites ] Creating friend request`);
+      const friendRequest = await fastify.db.$transaction(async (db) => {
+        if (friendshipIdToRemove) {
+          await db.friendship.delete({
+            where: {
+              id: friendshipIdToRemove,
+            },
+          });
+        }
+
+        return await db.friendship.create({
+          data: {
+            inviterId,
+            inviteeId,
+          },
+          select: {
+            id: true,
+            inviter: {
+              select: {
+                id: true,
+                username: true,
+                email: true,
+              },
+            },
+            seen: true,
+          },
+        });
+      });
+
+      if (!friendRequest) {
+        throw new Error('Something went wrong while creating friend request');
+      }
+
+      const friendRequestToSendToUser: FriendRequest = {
+        id: friendRequest.id,
+        username: friendRequest.inviter.username,
+        email: friendRequest.inviter.email,
+        seen: friendRequest.seen,
+      };
+
+      sendFriendRequestsUpdateToUser({
+        userId: inviteeId,
+        type: FriendRequestType.newFriendInvite,
+        payload: friendRequestToSendToUser,
+      });
+    } catch (err) {
+      fastify.log.error(
+        `[ router/friends/invites ] Error while creating friend request: ${err}`
+      );
+      throw new ApiError(
+        StatusCodes.INTERNAL_SERVER_ERROR,
+        'Something went wrong while creating friend request'
+      );
+    }
+  }
+
   function sendFriendRequestsUpdateToUser<T extends object>({
     type,
     userId,
@@ -143,13 +209,13 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
         );
       }
 
-      const user = await fastify.db.user.findFirst({
+      const invitee = await fastify.db.user.findFirst({
         where: {
           email,
         },
       });
 
-      if (!user) {
+      if (!invitee) {
         throw new ApiError(
           StatusCodes.NOT_FOUND,
           `User with email ${email} not found`
@@ -161,23 +227,63 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
           OR: [
             {
               inviterId: req.user.id,
-              inviteeId: user.id,
+              inviteeId: invitee.id,
             },
             {
-              inviterId: user.id,
+              inviterId: invitee.id,
               inviteeId: req.user.id,
             },
           ],
         },
       });
 
-      // TODO: if user declined friend request, we can send it again after some time (1 day?)
-      // TODO: if user that declined friend request is the one that sends friend request now send the request without the time limit
       if (existingFriendship) {
+        if (
+          existingFriendship.status === FriendRequestStatus.declined &&
+          existingFriendship.inviterId === req.user.id
+        ) {
+          const now = new Date();
+          const createdAt = new Date(existingFriendship.requestedAt);
+
+          const diff = now.getTime() - createdAt.getTime();
+
+          const cooldown = 1000 * 60 * 60 * 24;
+
+          if (diff < cooldown) {
+            throw new ApiError(
+              StatusCodes.BAD_REQUEST,
+              `You can't send friend request to user ${invitee.username} for 24 hours after he declined your request`
+            );
+          }
+          await createFriendshipAndSendNotificationToUser({
+            inviterId: req.user.id,
+            inviteeId: invitee.id,
+            friendshipIdToRemove: existingFriendship.id,
+          });
+
+          return rep
+            .status(StatusCodes.OK)
+            .send({ message: 'Successfully send friend invite to the user' });
+        }
+
+        if (
+          existingFriendship.status === FriendRequestStatus.declined &&
+          existingFriendship.inviteeId === req.user.id
+        ) {
+          await createFriendshipAndSendNotificationToUser({
+            inviterId: req.user.id,
+            inviteeId: invitee.id,
+            friendshipIdToRemove: existingFriendship.id,
+          });
+
+          return rep
+            .status(StatusCodes.OK)
+            .send({ message: 'Successfully send friend invite to the user' });
+        }
+
         const messages = {
-          pending: `You already send friend request to user ${user.username}`,
-          accepted: `You are already friends with user ${user.username}`,
-          declined: `${user.username} declined your friend request`,
+          [FriendRequestStatus.pending]: `You already send friend request to user ${invitee.username}`,
+          [FriendRequestStatus.accepted]: `You are already friends with user ${invitee.username}`,
         };
 
         const message =
@@ -186,35 +292,9 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
         throw new ApiError(StatusCodes.BAD_REQUEST, message);
       }
 
-      const friendRequest = await fastify.db.friendship.create({
-        data: {
-          inviterId: req.user.id,
-          inviteeId: user.id,
-        },
-        select: {
-          id: true,
-          inviter: {
-            select: {
-              id: true,
-              username: true,
-              email: true,
-            },
-          },
-          seen: true,
-        },
-      });
-
-      const inviterUser: FriendRequest = {
-        id: friendRequest.id,
-        username: friendRequest.inviter.username,
-        email: friendRequest.inviter.email,
-        seen: friendRequest.seen,
-      };
-
-      sendFriendRequestsUpdateToUser({
-        userId: user.id,
-        type: FriendRequestType.newFriendInvite,
-        payload: inviterUser,
+      await createFriendshipAndSendNotificationToUser({
+        inviterId: req.user.id,
+        inviteeId: invitee.id,
       });
 
       return rep
