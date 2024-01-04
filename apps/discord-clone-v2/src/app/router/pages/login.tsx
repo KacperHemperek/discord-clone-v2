@@ -22,14 +22,14 @@ export default function LoginPage() {
   });
 
   const { mutate: login } = useLogin({
-    onError: (error) => {
-      console.log(error);
+    onError: (err) => {
+      form.setFocus('email');
       form.reset();
       form.setError('email', {
-        message: 'Invalid username or password',
+        message: err.message,
       });
       form.setError('password', {
-        message: 'Invalid username or password',
+        message: err.message,
       });
     },
   });
