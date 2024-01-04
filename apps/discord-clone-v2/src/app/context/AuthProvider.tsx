@@ -15,6 +15,7 @@ export function useUserQuery() {
 
       return user;
     },
+    retry: false,
   });
 
   return {
