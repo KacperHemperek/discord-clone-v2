@@ -1,5 +1,5 @@
 import React from 'react';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, Trash } from 'lucide-react';
 import FriendListItemButton from './FriendItemButton';
 
 export default function FriendListItem({
@@ -25,6 +25,10 @@ export default function FriendListItem({
           <FriendListItemButton
             icon={<MessageCircle size={20} />}
             onClick={() => console.log('open chat window')}
+          />
+          <FriendListItemButton
+            icon={<Trash size={20} className='group-hover:text-dc-red-500' />}
+            onClick={() => console.log('remove friend')}
           />
         </div>
       </div>

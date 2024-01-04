@@ -64,7 +64,7 @@ export default function InviteUserPage() {
       </p>
       <form
         className={cn(
-          'flex bg-dc-neutral-950 py-2 px-3 items-center rounded-md focus-within:ring-2 ring-sky-500',
+          'flex bg-dc-neutral-1000 py-2 px-3 items-center rounded-md focus-within:ring-2 ring-sky-500',
           form.formState.errors.email && 'ring-dc-red-500',
           showSuccess && 'ring-dc-green-500'
         )}

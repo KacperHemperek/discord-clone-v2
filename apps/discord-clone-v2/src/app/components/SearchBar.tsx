@@ -9,7 +9,7 @@ export default function SearchBar({
   setValue: React.Dispatch<React.SetStateAction<string>>;
 }) {
   return (
-    <div className='bg-dc-neutral-950 px-3 py-1.5 rounded-md flex items-center gap-3 placeholder:text-dc-neutral-300'>
+    <div className='bg-dc-neutral-1000 px-3 py-1.5 rounded-md flex items-center gap-3 placeholder:text-dc-neutral-300'>
       <input
         type='text'
         className='bg-transparent outline-none flex-grow ring-0'

@@ -94,6 +94,7 @@ module.exports = {
           800: `rgba(var(--dc-neutral-800) / <alpha-value>)`,
           900: `rgba(var(--dc-neutral-900) / <alpha-value>)`,
           950: `rgba(var(--dc-neutral-950) / <alpha-value>)`,
+          1000: `rgba(var(--dc-neutral-1000) / <alpha-value>)`,
         },
       },
       borderRadius: {

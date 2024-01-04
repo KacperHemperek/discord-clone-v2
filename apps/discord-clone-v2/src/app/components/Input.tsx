@@ -25,7 +25,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         </label>
         <input
           ref={ref}
-          className='w-full p-2 rounded-sm bg-dc-neutral-950'
+          className='w-full p-2 rounded-sm bg-dc-neutral-1000'
           {...props}
         />
       </div>

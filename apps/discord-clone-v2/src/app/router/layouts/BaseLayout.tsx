@@ -13,8 +13,8 @@ export default function BaseLayout() {
 
   return (
     <FriendRequestsProvider>
-      <div className='flex h-screen max-h-screen bg-dc-neutral-800 overflow-hidden text-dc-neutral-50'>
-        <div className='flex flex-col bg-dc-neutral-950 '>
+      <div className='flex h-screen max-h-screen bg-dc-neutral-900 overflow-hidden text-dc-neutral-50'>
+        <div className='flex flex-col bg-dc-neutral-1000 '>
           {/* Channels */}
           <div className='flex-grow overflow-auto p-2 gap-2 flex flex-col'>
             <div className='w-10 h-10 rounded-full bg-dc-neutral-500'></div>
@@ -31,7 +31,7 @@ export default function BaseLayout() {
           </div>
         </div>
         {/* Friends */}
-        <div className='p-2 bg-dc-neutral-900'>
+        <div className='p-2 bg-dc-neutral-950'>
           <div className='w-64'>User one</div>
         </div>
         <Outlet />

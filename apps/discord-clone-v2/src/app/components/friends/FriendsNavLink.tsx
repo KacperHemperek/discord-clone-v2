@@ -14,7 +14,7 @@ const link = cva(
   {
     variants: {
       variant: {
-        neutral: 'hover:text-dc-neutral-100 hover:bg-dc-neutral-700',
+        neutral: 'hover:text-dc-neutral-100 hover:bg-dc-neutral-800',
         success: undefined,
       },
       state: {
@@ -26,7 +26,7 @@ const link = cva(
       {
         variant: 'neutral',
         state: 'active',
-        className: 'bg-dc-neutral-600 text-dc-neutral-50',
+        className: 'bg-dc-neutral-700 text-dc-neutral-50',
       },
       {
         variant: 'success',

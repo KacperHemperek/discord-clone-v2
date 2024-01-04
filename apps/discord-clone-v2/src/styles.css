@@ -76,7 +76,8 @@
   --dc-neutral-700: 71 77 87;
   --dc-neutral-800: 63 68 75;
   --dc-neutral-900: 48 51 56;
-  --dc-neutral-950: 34 37 42;
+  --dc-neutral-950: 42 45 49;
+  --dc-neutral-1000: 34 37 42;
 }
 
 @layer base {
