@@ -24,7 +24,7 @@ export default function BaseLayout() {
           <div className='flex flex-col gap-2 px-2 pb-2'>
             <button
               onClick={logout}
-              className='p-3  rounded-lg bg-dc-neutral-500 flex items-center justify-center'
+              className='p-3 rounded-full bg-dc-neutral-500 flex items-center justify-center'
             >
               <LogOut className='w-4 h-4' />
             </button>

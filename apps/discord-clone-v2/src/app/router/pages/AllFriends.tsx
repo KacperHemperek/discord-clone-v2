@@ -28,8 +28,8 @@ export default function AllFriendsPage() {
         <SearchBar value={search} setValue={setSearch} />
       </Container>
       <Container className='pt-4'>
-        <h1 className='uppercase text-xs font-semibold tracking-[0.02em] text-dc-neutral-200'>
-          Waiting - {filteredFriends?.length ?? 0}
+        <h1 className='uppercase text-xs font-semibold tracking-[0.02em] text-dc-neutral-300'>
+          Friends - {filteredFriends?.length ?? 0}
         </h1>
       </Container>
       <Container className='py-4 overflow-auto'>

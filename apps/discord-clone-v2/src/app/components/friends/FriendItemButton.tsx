@@ -10,7 +10,7 @@ export default function FriendListItemButton({
   return (
     <button
       onClick={onClick}
-      className='p-2 rounded-full bg-dc-neutral-900 group'
+      className='p-2 rounded-full bg-dc-neutral-950 group'
     >
       {icon}
     </button>

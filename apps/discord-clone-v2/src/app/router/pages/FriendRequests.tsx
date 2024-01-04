@@ -35,7 +35,7 @@ export default function FriendRequestsPage() {
         <SearchBar value={search} setValue={setSearch} />
       </Container>
       <Container className='py-4'>
-        <h1 className='uppercase text-xs font-semibold tracking-[0.02em] text-dc-neutral-200'>
+        <h1 className='uppercase text-xs font-semibold tracking-[0.02em] text-dc-neutral-300'>
           Waiting - {requests.length}
         </h1>
       </Container>
