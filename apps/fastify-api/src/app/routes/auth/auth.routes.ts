@@ -97,10 +97,17 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
       const { email, password } = request.body;
       const user = await fastify.db.user.findUnique({ where: { email } });
 
-      if (!user || user.password !== password) {
+      if (!user) {
+        throw new ApiError(
+          StatusCodes.NOT_FOUND,
+          'User with that email does not exist'
+        );
+      }
+
+      if (user.password !== password) {
         throw new ApiError(
           StatusCodes.UNAUTHORIZED,
-          'Invalid username or password'
+          'Incorrect email or password'
         );
       }
 
