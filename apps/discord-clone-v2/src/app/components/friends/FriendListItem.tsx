@@ -1,6 +1,7 @@
 import React from 'react';
 import { MessageCircle, Trash } from 'lucide-react';
 import FriendListItemButton from './FriendItemButton';
+import RemoveFriendDialog from './RemoveFriendDialog';
 
 export default function FriendListItem({
   id,
@@ -11,6 +12,8 @@ export default function FriendListItem({
   username: string;
   avatar?: string;
 }) {
+  const [open, setOpen] = React.useState(false);
+
   return (
     <div className='relative flex w-full group'>
       {/* Top Border */}
@@ -26,9 +29,17 @@ export default function FriendListItem({
             icon={<MessageCircle size={20} />}
             onClick={() => console.log('open chat window')}
           />
-          <FriendListItemButton
-            icon={<Trash size={20} />}
-            onClick={() => console.log('remove friend')}
+          <RemoveFriendDialog
+            open={open}
+            onOpenChange={setOpen}
+            trigger={
+              <FriendListItemButton
+                icon={<Trash size={20} />}
+                onClick={() => console.log('remove friend')}
+              />
+            }
+            id={id}
+            username={username}
           />
         </div>
       </div>
