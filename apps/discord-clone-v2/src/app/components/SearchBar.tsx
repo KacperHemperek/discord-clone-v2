@@ -1,7 +1,7 @@
 import { Search } from 'lucide-react';
 import React from 'react';
 
-export default function SearchBar({
+export default function DCSearchBar({
   setValue,
   value,
 }: {

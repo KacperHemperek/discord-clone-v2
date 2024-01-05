@@ -5,7 +5,7 @@ import FriendRequestItem from '../../components/friends/FriendRequestItem';
 import { useFriendRequests } from '../../context/FriendRequestsProvider';
 import { api } from '../../utils/api';
 import { Container } from '../../components/friends/FriendPageContainer';
-import SearchBar from '../../components/SearchBar';
+import DCSearchBar from '../../components/SearchBar';
 
 export default function FriendRequestsPage() {
   const { requests, markAllAsSeen, hasNewRequests } = useFriendRequests();
@@ -32,7 +32,7 @@ export default function FriendRequestsPage() {
   return (
     <>
       <Container className='pt-4'>
-        <SearchBar value={search} setValue={setSearch} />
+        <DCSearchBar value={search} setValue={setSearch} />
       </Container>
       <Container className='py-4'>
         <h1 className='uppercase text-xs font-semibold tracking-[0.02em] text-dc-neutral-300'>

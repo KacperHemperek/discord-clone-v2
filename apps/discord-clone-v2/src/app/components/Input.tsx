@@ -9,7 +9,7 @@ type InputProps = Omit<
   error?: string;
 };
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
+const DCInput = React.forwardRef<HTMLInputElement, InputProps>(
   ({ error, label, ...props }, ref) => {
     return (
       <div className='flex flex-col'>
@@ -33,4 +33,4 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
   }
 );
 
-export default Input;
+export default DCInput;

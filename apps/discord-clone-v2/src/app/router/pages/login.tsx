@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { z } from 'zod';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Input from '../../components/Input';
+import DCInput from '../../components/Input';
+import DCButton from '../../components/Button';
 
 const LoginFormSchema = z.object({
   email: z.string().min(1, 'Username is required'),
@@ -55,7 +56,7 @@ export default function LoginPage() {
             control={form.control}
             name='email'
             render={({ field, formState: { errors } }) => (
-              <Input
+              <DCInput
                 label='email'
                 type='text'
                 error={errors.email?.message}
@@ -69,7 +70,7 @@ export default function LoginPage() {
             control={form.control}
             name='password'
             render={({ field, formState: { errors } }) => (
-              <Input
+              <DCInput
                 label='password'
                 type='password'
                 error={errors.password?.message}
@@ -78,12 +79,14 @@ export default function LoginPage() {
             )}
           />
         </div>
-        <button
-          className='bg-green rounded-sm bg-dc-purple-500 p-3 mb-2 font-semibold'
-          type='submit'
+        <DCButton
+          size='lg'
+          fontSize='md'
+          fontWeight='semibold'
+          className='mb-6'
         >
           Login
-        </button>
+        </DCButton>
 
         <p className='text-sm text-dc-neutral-400'>
           Need an account?{' '}

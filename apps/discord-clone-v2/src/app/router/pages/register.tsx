@@ -3,7 +3,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
 import { useRegister } from '../../hooks/useRegister';
 import { Link } from 'react-router-dom';
-import Input from '../../components/Input';
+import DCInput from '../../components/Input';
+import DCButton from '../../components/Button';
 
 const registerFormSchema = z
   .object({
@@ -56,7 +57,7 @@ export default function RegisterPage() {
             control={form.control}
             name='email'
             render={({ field, formState: { errors } }) => (
-              <Input
+              <DCInput
                 {...field}
                 error={errors.email?.message}
                 type='text'
@@ -71,7 +72,7 @@ export default function RegisterPage() {
             control={form.control}
             name='username'
             render={({ field, formState: { errors } }) => (
-              <Input
+              <DCInput
                 {...field}
                 error={errors.username?.message}
                 type='text'
@@ -86,7 +87,7 @@ export default function RegisterPage() {
             control={form.control}
             name='password'
             render={({ field, formState: { errors } }) => (
-              <Input
+              <DCInput
                 {...field}
                 error={errors.password?.message}
                 type='password'
@@ -101,7 +102,7 @@ export default function RegisterPage() {
             control={form.control}
             name='confirmPassword'
             render={({ field, formState: { errors } }) => (
-              <Input
+              <DCInput
                 {...field}
                 error={errors.confirmPassword?.message}
                 type='password'
@@ -111,12 +112,9 @@ export default function RegisterPage() {
             )}
           />
         </div>
-        <button
-          className='bg-green rounded-sm bg-dc-purple-500 p-3 mb-4 font-semibold'
-          type='submit'
-        >
+        <DCButton fontSize='md' fontWeight='semibold' className='mb-4'>
           Register
-        </button>
+        </DCButton>
         <ul className='pb-2 text-sm text-neutral-400'>
           <h2>Password must have:</h2>
           <li className='flex gap-2 items-center pl-1'>
