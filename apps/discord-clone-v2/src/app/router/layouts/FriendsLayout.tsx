@@ -9,7 +9,7 @@ export default function FriendsLayout() {
 
   return (
     <div className='flex-grow flex flex-col'>
-      <nav className='border-b flex border-dc-neutral-900 w-full p-3 gap-4'>
+      <nav className='border-b flex border-dc-neutral-1000 w-full p-3 gap-4'>
         <div className='flex gap-2 font-semibold items-center'>
           <User />
           Friends

@@ -14,3 +14,7 @@ export const FriendSchema = Type.Object({
 export const GetAllFriendsResponseBody = Type.Object({
   friends: Type.Array(FriendSchema),
 });
+
+export const RemoveFriendBody = Type.Object({
+  friendId: Type.String(),
+});

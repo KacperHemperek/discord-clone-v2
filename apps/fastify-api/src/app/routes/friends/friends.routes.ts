@@ -1,10 +1,15 @@
 import { FastifyInstance } from 'fastify';
 import { StatusCodes } from 'http-status-codes';
 import { SocketStream } from '@fastify/websocket';
-import { FriendType, SendFriendRequestBodyType } from '@shared/types/friends';
+import {
+  FriendType,
+  RemoveFriendBodyType,
+  SendFriendRequestBodyType,
+} from '@shared/types/friends';
 
 import {
   GetAllFriendsResponseBody,
+  RemoveFriendBody,
   SendFriendRequestBody,
 } from './friends.schema';
 import { MessageSuccessResponse } from '../../utils/commonResponses';
@@ -303,15 +308,25 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
     },
   });
 
-  fastify.delete<{ Params: { inviteId: string } }>(`/invites/:inviteId`, {
+  fastify.delete<{ Body: RemoveFriendBodyType }>(`/invites`, {
+    schema: {
+      body: RemoveFriendBody,
+    },
     preHandler: fastify.auth([fastify.userRequired]),
     handler: async (req, rep) => {
-      const { inviteId } = req.params;
-
       const friendship = await fastify.db.friendship.findFirst({
         where: {
-          id: inviteId,
           status: FriendRequestStatus.accepted,
+          OR: [
+            {
+              inviteeId: req.body.friendId,
+              inviterId: req.user.id,
+            },
+            {
+              inviterId: req.body.friendId,
+              inviteeId: req.user.id,
+            },
+          ],
         },
       });
 
@@ -322,19 +337,9 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
         );
       }
 
-      if (
-        friendship.inviteeId !== req.user.id &&
-        friendship.inviterId !== req.user.id
-      ) {
-        throw new ApiError(
-          StatusCodes.UNAUTHORIZED,
-          'You cannot remove friend that is not your friend'
-        );
-      }
-
       await fastify.db.friendship.delete({
         where: {
-          id: inviteId,
+          id: friendship.id,
         },
       });
 

@@ -1,7 +1,7 @@
 import { VariantProps, cva } from 'class-variance-authority';
 import React from 'react';
 
-const button = cva('rounded-sm duration-150 font-medium', {
+const button = cva('rounded-sm duration-150 font-medium disabled:opacity-80', {
   variants: {
     variant: {
       primary:

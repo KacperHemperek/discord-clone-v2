@@ -31,15 +31,15 @@ export default function FriendListItem({
           />
           <RemoveFriendDialog
             open={open}
-            onOpenChange={setOpen}
+            setOpen={setOpen}
+            id={id}
+            username={username}
             trigger={
               <FriendListItemButton
                 icon={<Trash size={20} />}
                 onClick={() => console.log('remove friend')}
               />
             }
-            id={id}
-            username={username}
           />
         </div>
       </div>

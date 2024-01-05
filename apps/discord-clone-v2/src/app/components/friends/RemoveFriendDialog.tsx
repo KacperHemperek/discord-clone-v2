@@ -9,23 +9,66 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@radix-ui/react-dialog';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { MessageSuccessResponseType } from '@shared/types/commonResponses';
+import { RemoveFriendBodyType } from '@shared/types/friends';
 import DCButton from '../Button';
+import { api } from '../../utils/api';
+import { ToastDuration, useToast } from '../../hooks/useToast';
+import { ClientError } from '../../utils/clientError';
 
 export default function RemoveFriendDialog({
   id,
   username,
   trigger,
   open,
-  onOpenChange,
+  setOpen,
 }: {
   id: string;
   username: string;
   trigger: React.ReactNode;
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  setOpen: (open: boolean) => void;
 }) {
+  const queryClient = useQueryClient();
+  const toast = useToast();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: async () =>
+      await api.delete<MessageSuccessResponseType>(`/friends/invites`, {
+        body: JSON.stringify({
+          friendId: id,
+        } as RemoveFriendBodyType),
+      }),
+    onSuccess: (data) => {
+      toast.success(data.message, { duration: ToastDuration.short });
+      queryClient.invalidateQueries({ queryKey: ['all-friends'] });
+      setOpen(false);
+    },
+    onError: (error: ClientError) => {
+      toast.error(error.message, { duration: ToastDuration.short });
+    },
+  });
+
+  function removeFriend() {
+    mutate();
+  }
+
+  function closeDialog() {
+    if (isPending) return;
+    setOpen(false);
+  }
+
+  function handleOpenChange(open: boolean) {
+    if (open) {
+      setOpen(true);
+    } else {
+      closeDialog();
+    }
+  }
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogPortal>
         <DialogOverlay className='fixed inset-0 bg-black/50' />
@@ -42,11 +85,17 @@ export default function RemoveFriendDialog({
             <DCButton
               variant='link'
               size='lg'
-              onClick={() => onOpenChange(false)}
+              onClick={closeDialog}
+              disabled={isPending}
             >
               Cancel
             </DCButton>
-            <DCButton variant='danger' size='lg'>
+            <DCButton
+              variant='danger'
+              size='lg'
+              onClick={removeFriend}
+              disabled={isPending}
+            >
               Remove Friend
             </DCButton>
           </footer>
