@@ -6,6 +6,7 @@ import {
   CreateChatWithUsersSchema,
 } from './chats.schema';
 import { ApiError } from '../../utils/errors';
+import { FriendRequestStatus } from '../friends/friends.routes';
 
 export async function chatRoutes(fastify: FastifyInstance) {
   fastify.post<{ Body: CreateChatWithUsersType }>('/', {
@@ -21,7 +22,7 @@ export async function chatRoutes(fastify: FastifyInstance) {
         `[ ${req.url} ] Creating chat with users: ${req.body.userIds}`
       );
 
-      const friends = await fastify.db.friendship.findMany({
+      const relations = await fastify.db.friendship.findMany({
         where: {
           OR: [
             {
@@ -37,15 +38,37 @@ export async function chatRoutes(fastify: FastifyInstance) {
               },
             },
           ],
+          status: FriendRequestStatus.accepted,
+        },
+        select: {
+          inviteeId: true,
+          inviter: {
+            select: {
+              id: true,
+              username: true,
+            },
+          },
+          invitee: {
+            select: {
+              id: true,
+              username: true,
+            },
+          },
         },
       });
 
+      const friends = relations.map((friend) => {
+        return friend.inviteeId === req.user.id
+          ? friend.inviter
+          : friend.invitee;
+      });
+
+      console.dir({ relations }, { depth: null });
+
       // check if all users are friends
-      if (friends.length !== req.body.userIds.length) {
+      if (relations.length !== req.body.userIds.length) {
         const notFoundIds = req.body.userIds.filter((id) => {
-          return !friends.some(
-            (friend) => friend.inviteeId === id || friend.inviterId === id
-          );
+          return !friends.some((friend) => friend.id !== id);
         });
 
         throw new ApiError(
@@ -56,11 +79,18 @@ export async function chatRoutes(fastify: FastifyInstance) {
         );
       }
 
+      const concatFriendUsernames = friends
+        .map((friend) => friend.username)
+        .join(',');
+
+      const defaultChatName = `${req.user.username},${concatFriendUsernames}`;
+
       const chat = await fastify.db.chat.create({
         data: {
           users: {
             connect: [...req.body.userIds, req.user.id].map((id) => ({ id })),
           },
+          name: defaultChatName,
         },
       });
 
@@ -83,12 +113,7 @@ export async function chatRoutes(fastify: FastifyInstance) {
         },
         select: {
           id: true,
-          users: {
-            select: {
-              id: true,
-              username: true,
-            },
-          },
+          name: true,
         },
       });
 
