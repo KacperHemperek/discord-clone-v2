@@ -303,6 +303,47 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
     },
   });
 
+  fastify.delete<{ Params: { inviteId: string } }>(`/invites/:inviteId`, {
+    preHandler: fastify.auth([fastify.userRequired]),
+    handler: async (req, rep) => {
+      const { inviteId } = req.params;
+
+      const friendship = await fastify.db.friendship.findFirst({
+        where: {
+          id: inviteId,
+          status: FriendRequestStatus.accepted,
+        },
+      });
+
+      if (!friendship) {
+        throw new ApiError(
+          StatusCodes.NOT_FOUND,
+          'Could not find friend connection'
+        );
+      }
+
+      if (
+        friendship.inviteeId !== req.user.id &&
+        friendship.inviterId !== req.user.id
+      ) {
+        throw new ApiError(
+          StatusCodes.UNAUTHORIZED,
+          'You cannot remove friend that is not your friend'
+        );
+      }
+
+      await fastify.db.friendship.delete({
+        where: {
+          id: inviteId,
+        },
+      });
+
+      rep.send({
+        message: 'Friend removed successfully',
+      });
+    },
+  });
+
   fastify.get(
     '/invites',
     {
