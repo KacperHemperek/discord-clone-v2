@@ -19,12 +19,12 @@ export default function DCToast({
   };
 
   return (
-    <div className='bg-dc-neutral-950 rounded-md shadow-md flex gap-2 p-4 max-w-xs w-full'>
-      {icons[variant]}
-      <div className='flex flex-col gap-2'>
-        <h1 className='capitalize'>{variant}</h1>
-        <p>{message}</p>
+    <div className='bg-dc-neutral-1000 rounded-md shadow-md flex flex-col p-4 max-w-xs w-full'>
+      <div className='flex gap-2 items-center'>
+        {icons[variant]}
+        <h1 className='capitalize font-medium text-dc-neutral-50'>{variant}</h1>
       </div>
+      <p className='text-dc-neutral-300 pl-7 text-sm'>{message}</p>
     </div>
   );
 }

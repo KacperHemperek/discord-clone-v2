@@ -2,9 +2,9 @@ import toast, { type Toast } from 'react-hot-toast';
 import DCToast from '../components/Toast';
 
 export enum ToastDuration {
-  short = 2000,
-  medium = 3000,
-  long = 5000,
+  short = 1500,
+  medium = 2000,
+  long = 4000,
 }
 
 type ToastOptions = Partial<
