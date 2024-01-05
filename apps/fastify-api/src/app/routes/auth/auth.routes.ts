@@ -1,5 +1,6 @@
 import { FastifyPluginCallback } from 'fastify';
 import { StatusCodes } from 'http-status-codes';
+import bcryptjs from 'bcryptjs';
 import { LoginUserBodyType, RegisterUserBodyType } from '@shared/types/auth';
 import {
   GetLoggedInUserResponse,
@@ -12,6 +13,8 @@ import {
 import { ApiError } from '../../utils/errors';
 
 const authPlugin: FastifyPluginCallback = async (fastify) => {
+  const PASSWORD_SALT = 16;
+
   fastify.post<{ Body: RegisterUserBodyType }>('/register', {
     schema: {
       body: RegisterUserBody,
@@ -22,6 +25,8 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
     handler: async (request, reply) => {
       fastify.log.info(`[ routes/auth/register ] Registering user...`);
       const { username, password, confirmPassword, email } = request.body;
+
+      const hashedPassword = await bcryptjs.hash(password, PASSWORD_SALT);
 
       const user = await fastify.db.user.findFirst({
         where: { OR: [{ email }, { username }] },
@@ -54,7 +59,7 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
       const createdUser = await fastify.db.user.create({
         data: {
           username,
-          password,
+          password: hashedPassword,
           email,
         },
       });
@@ -103,8 +108,9 @@ const authPlugin: FastifyPluginCallback = async (fastify) => {
           'User with that email does not exist'
         );
       }
+      const isPasswordValid = await bcryptjs.compare(password, user.password);
 
-      if (user.password !== password) {
+      if (!isPasswordValid) {
         throw new ApiError(
           StatusCodes.UNAUTHORIZED,
           'Incorrect email or password'

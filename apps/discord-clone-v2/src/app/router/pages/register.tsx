@@ -30,7 +30,7 @@ export default function RegisterPage() {
     resolver: zodResolver(registerFormSchema),
     mode: 'onSubmit',
   });
-  const { mutate: register } = useRegister({
+  const { mutate: register, isPending } = useRegister({
     onError: (error) => {
       form.setError('email', { message: error.message });
       form.setError('username', { message: error.message });
@@ -56,6 +56,7 @@ export default function RegisterPage() {
           <Controller
             control={form.control}
             name='email'
+            disabled={isPending}
             render={({ field, formState: { errors } }) => (
               <DCInput
                 {...field}
@@ -71,6 +72,7 @@ export default function RegisterPage() {
           <Controller
             control={form.control}
             name='username'
+            disabled={isPending}
             render={({ field, formState: { errors } }) => (
               <DCInput
                 {...field}
@@ -86,6 +88,7 @@ export default function RegisterPage() {
           <Controller
             control={form.control}
             name='password'
+            disabled={isPending}
             render={({ field, formState: { errors } }) => (
               <DCInput
                 {...field}
@@ -101,6 +104,7 @@ export default function RegisterPage() {
           <Controller
             control={form.control}
             name='confirmPassword'
+            disabled={isPending}
             render={({ field, formState: { errors } }) => (
               <DCInput
                 {...field}
@@ -112,7 +116,12 @@ export default function RegisterPage() {
             )}
           />
         </div>
-        <DCButton fontSize='md' fontWeight='semibold' className='mb-4'>
+        <DCButton
+          fontSize='md'
+          fontWeight='semibold'
+          className='mb-4'
+          disabled={isPending}
+        >
           Register
         </DCButton>
         <ul className='pb-2 text-sm text-neutral-400'>

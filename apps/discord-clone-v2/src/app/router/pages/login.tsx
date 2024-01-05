@@ -22,7 +22,7 @@ export default function LoginPage() {
     },
   });
 
-  const { mutate: login } = useLogin({
+  const { mutate: login, isPending } = useLogin({
     onError: (err) => {
       form.setFocus('email');
       form.reset();
@@ -55,6 +55,7 @@ export default function LoginPage() {
           <Controller
             control={form.control}
             name='email'
+            disabled={isPending}
             render={({ field, formState: { errors } }) => (
               <DCInput
                 label='email'
@@ -69,6 +70,7 @@ export default function LoginPage() {
           <Controller
             control={form.control}
             name='password'
+            disabled={isPending}
             render={({ field, formState: { errors } }) => (
               <DCInput
                 label='password'
@@ -84,6 +86,7 @@ export default function LoginPage() {
           fontSize='md'
           fontWeight='semibold'
           className='mb-6'
+          disabled={isPending}
         >
           Login
         </DCButton>
