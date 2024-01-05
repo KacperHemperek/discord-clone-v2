@@ -63,8 +63,6 @@ export async function chatRoutes(fastify: FastifyInstance) {
           : friend.invitee;
       });
 
-      console.dir({ relations }, { depth: null });
-
       // check if all users are friends
       if (relations.length !== req.body.userIds.length) {
         const notFoundIds = req.body.userIds.filter((id) => {
