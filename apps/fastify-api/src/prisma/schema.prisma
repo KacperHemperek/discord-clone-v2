@@ -16,6 +16,8 @@ model User {
 
   invited   Friendship[] @relation("invited")
   invitedBy Friendship[] @relation("invitedBy")
+  chats     Chat[]
+  messages  Message[]
 }
 
 model Friendship {
@@ -32,4 +34,24 @@ model Friendship {
   inviteeId String @map("friendId")
 
   @@unique([inviterId, inviteeId])
+}
+
+model Chat {
+  id String @id @default(uuid())
+
+  messages Message[]
+  users    User[]
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  text  String?
+  image String?
+
+  senderId String
+  sender   User   @relation(fields: [senderId], references: [id])
+  chatId   String
+  chat     Chat   @relation(fields: [chatId], references: [id])
 }
