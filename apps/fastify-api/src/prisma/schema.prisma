@@ -37,8 +37,9 @@ model Friendship {
 }
 
 model Chat {
-  id   String @id @default(uuid())
-  name String
+  id   String  @id @default(uuid())
+  name String?
+  type String
 
   messages Message[]
   users    User[]
