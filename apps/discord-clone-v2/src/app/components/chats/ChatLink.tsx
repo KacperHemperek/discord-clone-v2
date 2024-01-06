@@ -11,7 +11,7 @@ export default function ChatLink({
   usersCount: number;
   id: string;
 }) {
-  const link = `/home/friends/chat/${id}`;
+  const link = `/home/chats/${id}`;
 
   const match = useMatch(link);
 

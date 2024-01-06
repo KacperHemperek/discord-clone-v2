@@ -34,11 +34,11 @@ export const router = createBrowserRouter([
                 path: 'invite',
                 element: <InviteUserPage />,
               },
-              {
-                path: 'chat/:id',
-                element: <PrivateChat />,
-              },
             ],
+          },
+          {
+            path: 'chats/:chatId',
+            element: <PrivateChat />,
           },
         ],
       },
