@@ -1,9 +1,13 @@
 import { FastifyInstance } from 'fastify';
 import { StatusCodes } from 'http-status-codes';
-import { CreateChatWithUsersType } from '@shared/types/chats';
 import {
-  CreateChatWithUsersSuccessResponse,
+  CreateChatWithUsersType,
+  GetChatsSuccessResponseType,
+} from '@shared/types/chats';
+import {
+  CreateChatWithUsersSuccessResponseSchema,
   CreateChatWithUsersSchema,
+  GetChatsSuccessResponseSchema,
 } from './chats.schema';
 import { ApiError } from '../../utils/errors';
 import { FriendRequestStatus } from '../friends/friends.routes';
@@ -13,7 +17,7 @@ export async function chatRoutes(fastify: FastifyInstance) {
     schema: {
       body: CreateChatWithUsersSchema,
       response: {
-        [StatusCodes.CREATED]: CreateChatWithUsersSuccessResponse,
+        [StatusCodes.CREATED]: CreateChatWithUsersSuccessResponseSchema,
       },
     },
     preHandler: fastify.auth([fastify.userRequired]),
@@ -97,6 +101,11 @@ export async function chatRoutes(fastify: FastifyInstance) {
   });
 
   fastify.get('/', {
+    schema: {
+      response: {
+        [StatusCodes.OK]: GetChatsSuccessResponseSchema,
+      },
+    },
     preHandler: fastify.auth([fastify.userRequired]),
     handler: async (req, rep) => {
       fastify.log.info(`[ ${req.url} ] Getting chats for user.`);
@@ -112,10 +121,25 @@ export async function chatRoutes(fastify: FastifyInstance) {
         select: {
           id: true,
           name: true,
+          _count: {
+            select: {
+              users: true,
+            },
+          },
         },
       });
 
-      rep.send({ chats });
+      const response: GetChatsSuccessResponseType['chats'] = chats.map(
+        (chat) => {
+          return {
+            id: chat.id,
+            name: chat.name,
+            usersCount: chat._count.users,
+          };
+        }
+      );
+
+      rep.status(StatusCodes.OK).send({ chats: response });
     },
   });
 

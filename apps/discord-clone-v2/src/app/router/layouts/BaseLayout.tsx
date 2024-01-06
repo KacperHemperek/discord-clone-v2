@@ -30,10 +30,7 @@ export default function BaseLayout() {
             </button>
           </div>
         </div>
-        {/* Friends */}
-        <div className='p-2 bg-dc-neutral-950'>
-          <div className='w-64'>User one</div>
-        </div>
+
         <Outlet />
       </div>
     </FriendRequestsProvider>

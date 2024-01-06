@@ -7,6 +7,7 @@ import FriendsLayout from './layouts/FriendsLayout';
 import FriendRequestsPage from './pages/FriendRequests';
 import AllFriendsPage from './pages/AllFriends';
 import InviteUserPage from './pages/InviteUser';
+import PrivateChat from './pages/PrivateChat';
 
 export const router = createBrowserRouter([
   {
@@ -32,6 +33,10 @@ export const router = createBrowserRouter([
               {
                 path: 'invite',
                 element: <InviteUserPage />,
+              },
+              {
+                path: 'chat/:id',
+                element: <PrivateChat />,
               },
             ],
           },
