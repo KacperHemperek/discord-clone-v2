@@ -1,7 +1,7 @@
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
-import { useRegister } from '../../hooks/useRegister';
+import { useRegister } from '../../hooks/reactQuery/useRegister';
 import { Link } from 'react-router-dom';
 import DCInput from '../../components/Input';
 import DCButton from '../../components/Button';

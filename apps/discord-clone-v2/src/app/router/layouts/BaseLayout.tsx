@@ -1,7 +1,7 @@
 import React from 'react';
 import { LogOut } from 'lucide-react';
 import { Outlet } from 'react-router-dom';
-import { useLogout } from '../../hooks/useLogout';
+import { useLogout } from '../../hooks/reactQuery/useLogout';
 import FriendRequestsProvider from '../../context/FriendRequestsProvider';
 
 export default function BaseLayout() {

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '../utils/api';
-import { MutationHookOptions } from '../types/utils';
+import { api } from '../../utils/api';
+import { MutationHookOptions } from '../../types/utils';
 import { useNavigate } from 'react-router-dom';
 import { MessageSuccessResponseType } from '@shared/types/commonResponses';
 

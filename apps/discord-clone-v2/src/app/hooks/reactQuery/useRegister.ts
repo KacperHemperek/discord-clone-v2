@@ -1,20 +1,19 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '../utils/api';
-
-import type {
-  LoginUserSuccessfullyResponseType,
-  LoginUserBodyType,
-} from '@shared/types/auth';
-import { MutationHookOptions } from '../types/utils';
 import { useNavigate } from 'react-router-dom';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  RegisterUserBodyType,
+  RegisterUserCreatedResponseType,
+} from '@shared/types/auth';
+import { MutationHookOptions } from '../../types/utils';
+import { api } from '../../utils/api';
 
-type AuthLoginMutationOptions = MutationHookOptions<
-  LoginUserSuccessfullyResponseType['user'],
+type RegisterMutationOptions = MutationHookOptions<
+  RegisterUserCreatedResponseType['user'],
   Error,
-  LoginUserBodyType
+  RegisterUserBodyType
 >;
 
-export function useLogin(options?: AuthLoginMutationOptions) {
+export function useRegister(options?: RegisterMutationOptions) {
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
@@ -22,8 +21,8 @@ export function useLogin(options?: AuthLoginMutationOptions) {
   return useMutation({
     ...options,
     mutationFn: async (data) => {
-      const json = await api.post<LoginUserSuccessfullyResponseType>(
-        '/auth/login',
+      const json = await api.post<RegisterUserCreatedResponseType>(
+        '/auth/register',
         {
           body: JSON.stringify(data),
         }
