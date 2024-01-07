@@ -5,7 +5,7 @@ export enum ChatTypes {
   group = 'group',
 }
 
-export const CreateChatWithUsersSchema = Type.Object({
+export const CreateChatWithUsersBodySchema = Type.Object({
   userIds: Type.Array(Type.String({ minLength: 1 })),
 });
 

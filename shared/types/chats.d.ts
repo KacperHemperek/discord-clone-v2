@@ -1,11 +1,18 @@
 import { Static } from '@sinclair/typebox';
 import {
-  CreateChatWithUsersSchema,
+  CreateChatWithUsersBodySchema,
+  CreateChatWithUsersSuccessResponseSchema,
   GetChatsSuccessResponseSchema,
 } from '@api/app/routes/chats/chats.schema';
 
-export type CreateChatWithUsersType = Static<typeof CreateChatWithUsersSchema>;
+export type CreateChatWithUsersBodyType = Static<
+  typeof CreateChatWithUsersBodySchema
+>;
 
 export type GetChatsSuccessResponseType = Static<
   typeof GetChatsSuccessResponseSchema
+>;
+
+export type CreateChatWithUsersSuccessResponseType = Static<
+  typeof CreateChatWithUsersSuccessResponseSchema
 >;

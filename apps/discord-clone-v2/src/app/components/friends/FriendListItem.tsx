@@ -1,7 +1,17 @@
 import React from 'react';
 import { MessageCircle, Trash } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  CreateChatWithUsersSuccessResponseType,
+  GetChatsSuccessResponseType,
+} from '@shared/types/chats';
+import { ChatTypes } from '@shared/configs/chats';
 import FriendListItemButton from './FriendItemButton';
 import RemoveFriendDialog from './RemoveFriendDialog';
+import { api } from '../../utils/api';
+import { ClientError } from '../../utils/clientError';
+import { useToast } from '../../hooks/useToast';
 
 export default function FriendListItem({
   id,
@@ -12,7 +22,55 @@ export default function FriendListItem({
   username: string;
   avatar?: string;
 }) {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const toast = useToast();
   const [open, setOpen] = React.useState(false);
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: async () => {
+      const data = await api.post<CreateChatWithUsersSuccessResponseType>(
+        '/chats',
+        {
+          body: JSON.stringify({
+            userIds: [id],
+          }),
+        }
+      );
+
+      return data;
+    },
+    onError: (error: ClientError) => {
+      toast.error(error.message);
+    },
+    onSuccess: (data) => {
+      const { chatId } = data;
+      queryClient.invalidateQueries({ queryKey: ['chats'] });
+      toast.success('Chat created successfully!');
+      navigate(`/home/chats/${chatId}`);
+    },
+  });
+
+  function createOrRedirectToChat() {
+    const data = queryClient.getQueryData(['chats']) as
+      | GetChatsSuccessResponseType
+      | undefined;
+
+    if (!data) return;
+
+    const chat = data.chats.find((chat) => {
+      return (
+        chat.type === ChatTypes.private &&
+        chat.users.some((user) => user.id === id)
+      );
+    });
+
+    if (chat) {
+      navigate(`/home/chats/${chat.id}}`);
+      return;
+    }
+    mutate();
+  }
 
   return (
     <div className='relative flex w-full group'>
@@ -26,8 +84,9 @@ export default function FriendListItem({
         {/* Action Buttons */}
         <div className='flex gap-3'>
           <FriendListItemButton
+            disabled={isPending}
             icon={<MessageCircle size={20} />}
-            onClick={() => console.log('open chat window')}
+            onClick={createOrRedirectToChat}
           />
           <RemoveFriendDialog
             open={open}
@@ -36,6 +95,7 @@ export default function FriendListItem({
             username={username}
             trigger={
               <FriendListItemButton
+                disabled={isPending}
                 icon={<Trash size={20} />}
                 onClick={() => console.log('remove friend')}
               />

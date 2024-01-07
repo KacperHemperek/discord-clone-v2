@@ -1,12 +1,12 @@
 import { FastifyInstance } from 'fastify';
 import { StatusCodes } from 'http-status-codes';
 import {
-  CreateChatWithUsersType,
+  CreateChatWithUsersBodyType,
   GetChatsSuccessResponseType,
 } from '@shared/types/chats';
 import {
   CreateChatWithUsersSuccessResponseSchema,
-  CreateChatWithUsersSchema,
+  CreateChatWithUsersBodySchema,
   GetChatsSuccessResponseSchema,
   ChatTypes,
 } from './chats.schema';
@@ -14,9 +14,9 @@ import { ApiError } from '../../utils/errors';
 import { FriendRequestStatus } from '../friends/friends.routes';
 
 export async function chatRoutes(fastify: FastifyInstance) {
-  fastify.post<{ Body: CreateChatWithUsersType }>('/', {
+  fastify.post<{ Body: CreateChatWithUsersBodyType }>('/', {
     schema: {
-      body: CreateChatWithUsersSchema,
+      body: CreateChatWithUsersBodySchema,
       response: {
         [StatusCodes.CREATED]: CreateChatWithUsersSuccessResponseSchema,
       },
