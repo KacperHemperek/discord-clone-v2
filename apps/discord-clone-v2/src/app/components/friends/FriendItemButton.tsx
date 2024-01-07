@@ -2,7 +2,7 @@ import React from 'react';
 
 type FriendListItemButtonProps = {
   icon: React.ReactNode;
-  onClick: () => void;
+  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
 };
 

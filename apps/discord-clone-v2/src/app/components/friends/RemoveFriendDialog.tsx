@@ -50,11 +50,14 @@ export default function RemoveFriendDialog({
     },
   });
 
-  function removeFriend() {
+  function removeFriend(e?: React.MouseEvent) {
+    e?.stopPropagation();
+
     mutate();
   }
 
-  function closeDialog() {
+  function closeDialog(e?: React.MouseEvent) {
+    e?.stopPropagation();
     if (isPending) return;
     setOpen(false);
   }

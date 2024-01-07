@@ -51,20 +51,18 @@ export default function FriendListItem({
     },
   });
 
-  function createOrRedirectToChat() {
-    const data = queryClient.getQueryData(['chats']) as
+  function createOrRedirectToChat(e: React.MouseEvent) {
+    e.stopPropagation();
+    const allChats = queryClient.getQueryData(['chats']) as
       | GetChatsSuccessResponseType
       | undefined;
 
-    if (!data) return;
-
-    const chat = data.chats.find((chat) => {
+    const chat = allChats?.chats.find((chat) => {
       return (
         chat.type === ChatTypes.private &&
         chat.users.some((user) => user.id === id)
       );
     });
-
     if (chat) {
       navigate(`/home/chats/${chat.id}}`);
       return;
@@ -73,7 +71,10 @@ export default function FriendListItem({
   }
 
   return (
-    <div className='relative flex w-full group'>
+    <div
+      onClick={createOrRedirectToChat}
+      className='relative flex w-full group cursor-pointer'
+    >
       {/* Top Border */}
       <div className='top-0 left-0 right-0 absolute h-[1px] bg-dc-neutral-850' />
       <div className='flex justify-between items-center flex-grow py-3 px-3 -mx-3 rounded-md group-hover:bg-dc-neutral-850 transition-colors duration-100'>
@@ -97,7 +98,7 @@ export default function FriendListItem({
               <FriendListItemButton
                 disabled={isPending}
                 icon={<Trash size={20} />}
-                onClick={() => console.log('remove friend')}
+                onClick={(e) => e.stopPropagation()}
               />
             }
           />
