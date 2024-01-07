@@ -43,6 +43,7 @@ export default function RemoveFriendDialog({
     onSuccess: (data) => {
       toast.success(data.message, { duration: ToastDuration.short });
       queryClient.invalidateQueries({ queryKey: ['all-friends'] });
+      queryClient.invalidateQueries({ queryKey: ['chats'] });
       setOpen(false);
     },
     onError: (error: ClientError) => {

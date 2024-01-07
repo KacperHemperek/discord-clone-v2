@@ -14,6 +14,7 @@ import {
 } from './friends.schema';
 import { MessageSuccessResponse } from '../../utils/commonResponses';
 import { ApiError } from '../../utils/errors';
+import { ChatTypes } from '../chats/chats.schema';
 
 export enum FriendRequestType {
   newFriendInvite = 'NEW_FRIEND_INVITE',
@@ -336,11 +337,35 @@ export const friendsRoutes = async (fastify: FastifyInstance) => {
           'Could not find friend connection'
         );
       }
+      await fastify.db.$transaction(async (db) => {
+        await db.friendship.delete({
+          where: {
+            id: friendship.id,
+          },
+        });
+        const privateChatToDelete = await db.chat.findFirst({
+          where: {
+            type: ChatTypes.private,
+            users: {
+              every: {
+                id: {
+                  in: [req.user.id, req.body.friendId],
+                },
+              },
+            },
+          },
+        });
 
-      await fastify.db.friendship.delete({
-        where: {
-          id: friendship.id,
-        },
+        if (privateChatToDelete) {
+          fastify.log.info(
+            `[ ${req.url} ] Deleting private chat with id ${privateChatToDelete.id}`
+          );
+          await db.chat.delete({
+            where: {
+              id: privateChatToDelete.id,
+            },
+          });
+        }
       });
 
       rep.send({
