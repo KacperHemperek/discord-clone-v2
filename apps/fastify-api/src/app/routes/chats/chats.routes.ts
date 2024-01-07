@@ -8,6 +8,7 @@ import {
   CreateChatWithUsersSuccessResponseSchema,
   CreateChatWithUsersSchema,
   GetChatsSuccessResponseSchema,
+  ChatTypes,
 } from './chats.schema';
 import { ApiError } from '../../utils/errors';
 import { FriendRequestStatus } from '../friends/friends.routes';
@@ -81,6 +82,39 @@ export async function chatRoutes(fastify: FastifyInstance) {
         );
       }
 
+      const allMembers = [...friends, req.user];
+
+      if (allMembers.length === 2) {
+        const existingChat = await fastify.db.chat.findFirst({
+          where: {
+            type: ChatTypes.private,
+            users: {
+              every: {
+                id: {
+                  in: allMembers.map((member) => member.id),
+                },
+              },
+            },
+            name: null,
+          },
+        });
+
+        if (existingChat) {
+          return rep.code(201).send({ chatId: existingChat.id });
+        }
+
+        const chat = await fastify.db.chat.create({
+          data: {
+            users: {
+              connect: allMembers.map((member) => ({ id: member.id })),
+            },
+            type: ChatTypes.private,
+          },
+        });
+
+        return rep.code(201).send({ chatId: chat.id });
+      }
+
       const concatFriendUsernames = friends
         .map((friend) => friend.username)
         .join(',');
@@ -93,6 +127,7 @@ export async function chatRoutes(fastify: FastifyInstance) {
             connect: [...req.body.userIds, req.user.id].map((id) => ({ id })),
           },
           name: defaultChatName,
+          type: ChatTypes.group,
         },
       });
 
@@ -126,15 +161,22 @@ export async function chatRoutes(fastify: FastifyInstance) {
               users: true,
             },
           },
+          users: {
+            select: {
+              id: true,
+              username: true,
+            },
+          },
+          type: true,
         },
       });
 
       const response: GetChatsSuccessResponseType['chats'] = chats.map(
         (chat) => {
           return {
-            id: chat.id,
-            name: chat.name,
+            ...chat,
             usersCount: chat._count.users,
+            type: chat.type as ChatTypes,
           };
         }
       );
