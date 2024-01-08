@@ -9,6 +9,7 @@
     "dev:client": "pnpm dlx nx serve discord-clone-v2",
     "studio": "pnpm prisma studio --schema=./apps/fastify-api/src/prisma/schema.prisma",
     "migrate": "pnpm prisma migrate dev --schema=./apps/fastify-api/src/prisma/schema.prisma",
+    "migrate:deploy": "pnpm prisma migrate deploy --schema=./apps/fastify-api/src/prisma/schema.prisma",
     "dev": "docker compose -f docker-compose.dev.yml up",
     "dev:build": "docker compose -f docker-compose.dev.yml up --build",
     "down": "docker compose -f docker-compose.dev.yml down"

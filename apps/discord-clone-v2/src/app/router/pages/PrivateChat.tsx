@@ -17,7 +17,10 @@ export default function PrivateChat() {
   const websocketRef = React.useRef<WebSocket | null>(null);
 
   const [messages, setMessages] = React.useState<ChatMessage[]>([]);
-  const [chatName, setChatName] = React.useState<string>('');
+  const [chatInfo, setChatInfo] = React.useState<{
+    name: string;
+    type: ChatTypes;
+  } | null>(null);
 
   React.useEffect(() => {
     const ws = getWebsocketConnection(`/chats/${chatId}/messages`);
@@ -31,10 +34,10 @@ export default function PrivateChat() {
         if (data.type === ChatMessageType.allMessages) {
           if (data.chatType === ChatTypes.private) {
             const friend = data.members.find((u) => u.id !== user?.id);
-            setChatName(friend?.username || '');
+            setChatInfo({ name: friend?.username || '', type: data.chatType });
           }
           if (data.chatType === ChatTypes.group && data.chatName) {
-            setChatName(data.chatName);
+            setChatInfo({ name: data.chatName, type: data.chatType });
           }
           setMessages(data.messages);
         }
@@ -46,19 +49,34 @@ export default function PrivateChat() {
     };
   }, []);
 
+  const placeholder =
+    chatInfo && chatInfo.type === ChatTypes.private
+      ? `Message @${chatInfo.name}`
+      : `Message ${chatInfo?.name}`;
+
+  if (!chatInfo) return null;
+
   return (
     <>
       <ChatLinkList />
       <div className='flex-grow flex flex-col'>
         <nav className='border-b flex border-dc-neutral-1000 w-full p-3 gap-4'>
           <div className='flex gap-2 font-semibold items-center'>
-            {chatName}
+            {chatInfo?.name}
           </div>
         </nav>
-        {messages.map((message) => (
-          <div key={message.createdAt as string}>{message.text}</div>
-        ))}
-        {/* Chat messages */}
+
+        <div className='flex flex-col-reverse flex-grow px-4 pb-2'>
+          {messages.map((message) => (
+            <div key={message.id}>{message.text}</div>
+          ))}
+        </div>
+        <div className='w-full flex pt-0 pb-4 px-4'>
+          <input
+            className='w-full p-2 rounded-md bg-dc-neutral-1000 outline-none'
+            placeholder={placeholder}
+          />
+        </div>
       </div>
     </>
   );
