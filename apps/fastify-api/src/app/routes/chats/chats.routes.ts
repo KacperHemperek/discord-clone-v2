@@ -1,8 +1,10 @@
 import { FastifyInstance } from 'fastify';
 import { StatusCodes } from 'http-status-codes';
 import {
+  AllMessagesType,
   CreateChatWithUsersBodyType,
   GetChatsSuccessResponseType,
+  NewMessageType,
 } from '@shared/types/chats';
 import {
   CreateChatWithUsersSuccessResponseSchema,
@@ -20,26 +22,6 @@ export enum ChatMessageType {
   allMessages = 'ALL_MESSAGES',
   newMessage = 'NEW_MESSAGE',
 }
-
-export type AllMessagesType = {
-  type: ChatMessageType.allMessages;
-  messages: {
-    senderId: string;
-    text: string | null;
-    image: string | null;
-    createdAt: Date;
-  }[];
-};
-
-export type NewMessageType = {
-  type: ChatMessageType.newMessage;
-  message: {
-    senderId: string;
-    text: string | null;
-    image: string | null;
-    createdAt: Date;
-  };
-};
 
 export async function chatRoutes(fastify: FastifyInstance) {
   const connections = new Map<string, ConnectionObj[]>();
@@ -270,8 +252,12 @@ export async function chatRoutes(fastify: FastifyInstance) {
           users: {
             select: {
               id: true,
+              email: true,
+              username: true,
             },
           },
+          name: true,
+          type: true,
         },
       });
 
@@ -373,6 +359,9 @@ export async function chatRoutes(fastify: FastifyInstance) {
             createdAt: message.createdAt,
           };
         }),
+        chatName: chat.name,
+        chatType: chat.type as ChatTypes,
+        members: chat.users,
       };
 
       connection.socket.send(JSON.stringify(allMessages));
