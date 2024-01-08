@@ -71,7 +71,7 @@ export default function InviteUserPage() {
         onSubmit={form.handleSubmit(sendFriendRequest)}
       >
         <input
-          className='bg-transparent placeholder:text-dc-neutral-300 ring-0 flex-grow text-lg'
+          className='bg-transparent placeholder:text-dc-neutral-300 ring-0 flex-grow text-lg outline-none'
           type='text'
           placeholder='Enter users email address'
           {...form.register('email')}
