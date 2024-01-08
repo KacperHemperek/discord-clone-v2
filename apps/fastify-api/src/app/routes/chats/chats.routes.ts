@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { StatusCodes } from 'http-status-codes';
 import {
   AllMessagesType,
+  ChatMessage,
   CreateChatWithUsersBodyType,
   GetChatsSuccessResponseType,
   NewMessageType,
@@ -28,12 +29,7 @@ export async function chatRoutes(fastify: FastifyInstance) {
 
   function sendMessageToAllConnectedUsers(
     chatId: string,
-    message: {
-      senderId: string;
-      text: string | null;
-      image: string | null;
-      createdAt: Date;
-    }
+    message: ChatMessage
   ) {
     const connectionArr = connections.get(chatId);
 
@@ -327,6 +323,7 @@ export async function chatRoutes(fastify: FastifyInstance) {
         });
 
         sendMessageToAllConnectedUsers(req.params.chatId, {
+          id: message.id,
           senderId: message.senderId,
           text: message.text,
           image: message.image,
@@ -339,6 +336,7 @@ export async function chatRoutes(fastify: FastifyInstance) {
           chatId: req.params.chatId,
         },
         select: {
+          id: true,
           senderId: true,
           text: true,
           image: true,
@@ -353,6 +351,7 @@ export async function chatRoutes(fastify: FastifyInstance) {
         type: ChatMessageType.allMessages,
         messages: messages.map((message) => {
           return {
+            id: message.id,
             senderId: message.senderId,
             text: message.text,
             image: message.image,

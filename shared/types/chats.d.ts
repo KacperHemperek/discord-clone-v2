@@ -20,6 +20,7 @@ export type CreateChatWithUsersSuccessResponseType = Static<
 >;
 
 export type ChatMessage = {
+  id: string;
   senderId: string;
   text: string | null;
   image: string | null;
